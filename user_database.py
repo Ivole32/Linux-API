@@ -69,7 +69,9 @@ class SecureUserDatabase:
             conn.commit()
     
     def _generate_api_key(self) -> str:
-        return secrets.token_hex(64)
+        key = secrets.token_hex(64)
+        print(key)
+        return key
 
     def _generate_salt(self) -> str:
         return secrets.token_hex(self.salt_length)
@@ -93,7 +95,7 @@ class SecureUserDatabase:
     def add_user(self, username: str, role: UserRole, api_key: str = "") -> bool:
         if api_key == "":
             api_key = self._generate_api_key()
-            
+
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             
