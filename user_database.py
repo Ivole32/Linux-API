@@ -90,7 +90,10 @@ class SecureUserDatabase:
     def _secure_compare(self, a: str, b: str) -> bool:
         return hmac.compare_digest(a.encode('utf-8'), b.encode('utf-8'))
     
-    def add_user(self, username: str, role: UserRole, api_key: str = _generate_api_key()) -> bool:
+    def add_user(self, username: str, role: UserRole, api_key: str = "") -> bool:
+        if api_key == "":
+            api_key = self._generate_api_key()
+            
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             
