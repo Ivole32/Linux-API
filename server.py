@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, Header, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -37,10 +38,10 @@ def get_user_role(required_role: str):
         return verify_api_key(x_api_key, required_role)
     return Depends(dependency)
 
-@app.get("/user-area", tags=["User"])
+@app.get("/user_info", tags=["User"])
 @limiter.limit("5/minute")
-def user_area(request: Request, role= get_user_role("user")):
-    return {"message": f"Welcome, {role}!"}
+def user_info(request: Request, role= get_user_role("user")):
+    return JSONResponse(content={"role": f"{role}"})
 
 @app.get("/admin-area", tags=["Admin"])
 @limiter.limit("5/minute")
