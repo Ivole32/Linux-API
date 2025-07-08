@@ -3,12 +3,15 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from fastapi.responses import JSONResponse
+from user_database import get_user_database, UserRole
 
 app = FastAPI()
 
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
+
+user_db = get_user_database()
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
@@ -20,30 +23,45 @@ async def add_security_headers(request: Request, call_next):
 
     return response
 
-API_KEYS = {
-    "key-user-123": "user",
-    "key-admin-456": "admin"
-}
-
 def verify_api_key(x_api_key: str = Header(...), required_role: str = "user"):
-    user_role = API_KEYS.get(x_api_key)
-    if user_role is None:
+    result = user_db.verify_api_key(x_api_key)
+    
+    if result is None:
         raise HTTPException(status_code=401, detail="Invalid API key")
-    if required_role == "admin" and user_role != "admin":
+    
+    username, user_role = result
+    
+    if required_role == "admin" and user_role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Admin access required")
-    return user_role
+    
+    return {"username": username, "role": user_role.value}
 
 def get_user_role(required_role: str):
     def dependency(x_api_key: str = Header(...)):
         return verify_api_key(x_api_key, required_role)
     return Depends(dependency)
 
-@app.get("/user_info", tags=["User"])
-@limiter.limit("5/minute")
-def user_info(request: Request, role= get_user_role("user")):
-    return JSONResponse(content={"role": f"{role}"})
+@app.get("/", tags=["General"])
+@limiter.limit("10/minute")
+def landing_page(request: Request):
+    return JSONResponse(content={"message": "Docs at /docs"})
 
-@app.get("/admin-area", tags=["Admin"])
+@app.get("/user_info", tags=["User"])
+@limiter.limit("10/minute")
+def user_info(request: Request, user_data = get_user_role("user")):
+    return JSONResponse(content={
+        "username": user_data["username"],
+        "role": user_data["role"]
+    })
+
+@app.get("/admin/admin-area", tags=["Admin"])
+@limiter.limit("10/minute")
+def admin_area(request: Request, user_data = get_user_role("admin")):
+    return {"message": f"Admin access granted for {user_data['username']} with role {user_data['role']}!"}
+
+@app.get("/admin/users", tags=["Admin"])
 @limiter.limit("5/minute")
-def admin_area(request: Request, role= get_user_role("admin")):
-    return {"message": f"Admin access granted for {role}!"}
+def list_users(request: Request, user_data = get_user_role("admin")):
+    """Listet alle Benutzer auf (nur für Admins)."""
+    users = user_db.list_users()
+    return {"users": users}

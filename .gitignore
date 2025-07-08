@@ -1,1 +1,3 @@
-__pycache__
+# Python
+__pycache__/
+*.db
