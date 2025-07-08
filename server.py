@@ -46,4 +46,3 @@ def user_area(request: Request, role= get_user_role("user")):
 @limiter.limit("5/minute")
 def admin_area(request: Request, role= get_user_role("admin")):
     return {"message": f"Admin access granted for {role}!"}
-#Test
