@@ -1,3 +1,5 @@
+from sys import argv
+
 from fastapi import FastAPI, HTTPException, Depends, Header, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -65,3 +67,6 @@ def list_users(request: Request, user_data = get_user_role("admin")):
     """Listet alle Benutzer auf (nur für Admins)."""
     users = user_db.list_users()
     return {"users": users}
+
+if "--init" in argv:
+    user_db.initialize_default_users()
