@@ -197,6 +197,15 @@ class SecureUserDatabase:
                 return True
             return False
     
+    def delete_user(self, username: str) -> bool:
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM users WHERE username = ?', (username,))
+            if cursor.rowcount > 0:
+                conn.commit()
+                return True
+            return False
+
     def change_api_key(self, username: str, new_api_key: str) -> bool:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()

@@ -82,4 +82,12 @@ def create_user(request: Request, username: str, role: UserRole, api_key: str = 
 
     return {"user": {"username": username, "role": role.value, "api_key": user}}
 
-#@app.delete("/admin/users/delete", tags=["Admin"])
+# User + Admin endpoints
+@app.delete("/user/delete", tags=["Admin", "User"])
+@limiter.limit("5/minute")
+def delete_user(request: Request, username: str, api_key: str, user_data = get_user_role("user"))
+    if user_data["role"] == "admin":
+        user_db.delete_user(username)
+
+    elif user_data["username"] == username:
+        user_db.delete_user(username)
