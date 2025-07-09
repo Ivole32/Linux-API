@@ -70,3 +70,7 @@ def list_users(request: Request, user_data = get_user_role("admin")):
     """Listet alle Benutzer auf (nur für Admins)."""
     users = user_db.list_users()
     return {"users": users}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080, reload=True)
