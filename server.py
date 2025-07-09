@@ -43,30 +43,30 @@ def get_user_role(required_role: str):
         return verify_api_key(x_api_key, required_role)
     return Depends(dependency)
 
-#Landing route route
-@app.get("/", tags=["General"])
+#Landing endpoint
+@app.get("/", tags=["General"], description = "The landing endpoint of the API. It returns a message with the documentation link.")
 @limiter.limit("10/minute")
 def landing_page(request: Request):
-    return JSONResponse(content={"message": "Docs at /docs"})
+    return JSONResponse(content={"message": "Docs at /docs", "doc-link": "/docs"})
 
-# User routes
-@app.get("/user/user-info", tags=["User"])
+# User endpoints
+@app.get("/user/user-info", tags=["User"], description = "This endpoint returns the key owner's user informations.")
 @limiter.limit("10/minute")
-def user_info(request: Request, user_data = get_user_role("user"), description: str = "This endpoint returns the key owner's user informations."):
+def user_info(request: Request, user_data = get_user_role("user")):
     return JSONResponse(content={
         "username": user_data["username"],
         "role": user_data["role"]
     })
 
-# Admin routes
-@app.get("/admin/admin-area", tags=["Admin"])
+# Admin endpoints
+@app.get("/admin/admin-area", tags=["Admin"], description = "A testing endpoint")
 @limiter.limit("10/minute")
 def admin_area(request: Request, user_data = get_user_role("admin")):
     return {"message": f"Admin access granted for {user_data['username']} with role {user_data['role']}!"}
 
-@app.get("/admin/users", tags=["Admin"])
+@app.get("/admin/users", tags=["Admin"], description = "This endpoint returns a list of all users with there account informations.")
 @limiter.limit("5/minute")
-def list_users(request: Request, user_data = get_user_role("admin"), description: str = "This endpoint returns a list of all users with there account informations."):
+def list_users(request: Request, user_data = get_user_role("admin")):
     users = user_db.list_users()
     return {"users": users}
 
