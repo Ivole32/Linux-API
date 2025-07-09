@@ -5,7 +5,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from fastapi.responses import JSONResponse
-from user_database import get_user_database, UserRole
+from user_database import get_user_database, UserRole, initialize_default_users
 
 app = FastAPI()
 
@@ -16,7 +16,7 @@ app.add_middleware(SlowAPIMiddleware)
 user_db = get_user_database()
 
 if "--init" in argv:
-    user_db.initialize_default_users(first_run=True)
+    initialize_default_users(first_run=True)
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
