@@ -69,4 +69,4 @@ def list_users(request: Request, user_data = get_user_role("admin")):
     return {"users": users}
 
 if "--init" in argv:
-    user_db.initialize_default_users()
+    user_db.initialize_default_users(first_run=True)
