@@ -248,7 +248,7 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
     db = SecureUserDatabase(db_path)
 
     if not db.get_user("admin"):
-        db.add_user("admin", UserRole.ADMIN, first_run=True)
+        db.add_user("admin", UserRole.ADMIN, first_run=first_run)
     
     return db
 
