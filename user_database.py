@@ -257,5 +257,5 @@ _user_db_instance = None
 def get_user_database(db_path: str = "users.db") -> SecureUserDatabase:
     global _user_db_instance
     if _user_db_instance is None:
-        _user_db_instance = initialize_default_users(db_path)
+        _user_db_instance = initialize_default_users(db_path, first_run=True)
     return _user_db_instance
