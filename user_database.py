@@ -70,7 +70,6 @@ class SecureUserDatabase:
     
     def _generate_api_key(self) -> str:
         key = secrets.token_hex(64)
-        print(key)
         return key
 
     def _generate_salt(self) -> str:
