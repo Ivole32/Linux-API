@@ -87,7 +87,16 @@ def create_user(request: Request, username: str, role: UserRole, api_key: str = 
 @limiter.limit("5/minute")
 def delete_user(request: Request, username: str, user_data = get_user_role("user")):
     if user_data["role"] == "admin":
-        user_db.delete_user(username)
+        if user_db.delete_user(username) == True:
+            return JSONResponse(content={
+                "status": "success"
+            })
 
     elif user_data["username"] == username:
-        user_db.delete_user(username)
+        if user_db.delete_user(username) == True:
+            return JSONResponse(content={
+                "status": "success"
+            })
+
+    else:
+        raise HTTPException(status_code=403, detail="Admin access required for performing this action on other user's accounts.")
