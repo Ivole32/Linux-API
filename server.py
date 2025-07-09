@@ -43,12 +43,14 @@ def get_user_role(required_role: str):
         return verify_api_key(x_api_key, required_role)
     return Depends(dependency)
 
+#Landing route route
 @app.get("/", tags=["General"])
 @limiter.limit("10/minute")
 def landing_page(request: Request):
     return JSONResponse(content={"message": "Docs at /docs"})
 
-@app.get("/user_info", tags=["User"])
+# User routes
+@app.get("/user/user-info", tags=["User"])
 @limiter.limit("10/minute")
 def user_info(request: Request, user_data = get_user_role("user")):
     return JSONResponse(content={
@@ -56,6 +58,7 @@ def user_info(request: Request, user_data = get_user_role("user")):
         "role": user_data["role"]
     })
 
+# Admin routes
 @app.get("/admin/admin-area", tags=["Admin"])
 @limiter.limit("10/minute")
 def admin_area(request: Request, user_data = get_user_role("admin")):
@@ -64,11 +67,10 @@ def admin_area(request: Request, user_data = get_user_role("admin")):
 @app.get("/admin/users", tags=["Admin"])
 @limiter.limit("5/minute")
 def list_users(request: Request, user_data = get_user_role("admin")):
-    """Listet alle Benutzer auf (nur für Admins)."""
     users = user_db.list_users()
     return {"users": users}
 
-@app.post("/admin/users/create", tags=["Admin"])
+@app.post("/admin/user/create", tags=["Admin"])
 @limiter.limit("5/minute")
 def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin")):
     user = user_db.add_user(username, role, api_key=api_key)
@@ -76,3 +78,5 @@ def create_user(request: Request, username: str, role: UserRole, api_key: str = 
         raise HTTPException(status_code=400, detail="User creation failed or user already exists")
 
     return {"user": {"username": username, "role": role.value, "api_key": user}}
+
+#@app.delete("/admin/users/delete", tags=["Admin"])
