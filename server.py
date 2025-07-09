@@ -44,7 +44,11 @@ def get_user_role(required_role: str):
     return Depends(dependency)
 
 #Landing endpoint
-@app.get("/", tags=["General"], description="The landing endpoint of the API. It returns a message with the documentation link.")
+@app.get("/", tags=["General"], 
+         description="The landing endpoint of the API. It returns a message with the documentation link.",
+         responses = {
+             200: "The server works"
+         })
 @limiter.limit("10/minute")
 def landing_page(request: Request):
     return JSONResponse(content={
@@ -53,7 +57,13 @@ def landing_page(request: Request):
         })
 
 # User endpoints
-@app.get("/user/user-info", tags=["User"], description="This endpoint returns the key owner's user informations.")
+@app.get("/user/user-info", 
+         tags=["User"], 
+         description="This endpoint returns the key owner's user informations.",
+         responses = {
+             200: "User information returned",
+             401: "Unauthorized. Invalid API key"
+         })
 @limiter.limit("10/minute")
 def user_info(request: Request, user_data = get_user_role("user")):
     return JSONResponse(content={
@@ -62,18 +72,40 @@ def user_info(request: Request, user_data = get_user_role("user")):
     })
 
 # Admin endpoints
-@app.get("/admin/admin-area", tags=["Admin"], description="A testing endpoint")
+@app.get("/admin/admin-area", 
+         tags=["Admin"], 
+         description="A testing endpoint",
+         responses = {
+             200: "You are admin!!!",
+             401: "Unauthorized. Invalid API key",
+             403: "Admin access required"
+         })
 @limiter.limit("10/minute")
 def admin_area(request: Request, user_data = get_user_role("admin")):
     return {"message": f"Admin access granted for {user_data['username']} with role {user_data['role']}!"}
 
-@app.get("/admin/users", tags=["Admin"], description="This endpoint returns a list of all users with there account informations.")
+@app.get("/admin/users", 
+         tags=["Admin"], 
+         description="This endpoint returns a list of all users with there account informations.",
+         responses = {
+             200: "Users listed successfuly",
+             401: "Unauthorized. Invalid API key",
+             403: "Admin access required"
+         })
 @limiter.limit("5/minute")
 def list_users(request: Request, user_data = get_user_role("admin")):
     users = user_db.list_users()
     return {"users": users}
 
-@app.post("/admin/user/create", tags=["Admin"], description="This endpoint creates a new user with the specified username, role, and optional API key.")
+@app.post("/admin/user/create", 
+          tags=["Admin"], 
+          description="This endpoint creates a new user with the specified username, role, and optional API key.",
+          responses = {
+              200: "The user was created successfuly",
+              400: "User creation failed or user already exists",
+              401: "Unauthorized. Invalid API key",
+              403: "Admin access required"
+          })
 @limiter.limit("5/minute")
 def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin")):
     user = user_db.add_user(username, role, api_key=api_key)
@@ -83,7 +115,14 @@ def create_user(request: Request, username: str, role: UserRole, api_key: str = 
     return {"user": {"username": username, "role": role.value, "api_key": user}}
 
 # User + Admin endpoints
-@app.delete("/user/delete", tags=["Admin", "User"], description="A endpoint to delete a user. If you are an admin you can delet all users and if you are a normal user, you can only delete your account")
+@app.delete("/user/delete", 
+            tags=["Admin", "User"], 
+            description="A endpoint to delete a user. If you are an admin you can delet every users you wnat to and if you are a normal user, you can only delete your account",
+            responses = {
+                200: "User was deleted successfuly",
+                403: "You don't have the rights to delete that user",
+                401: "Unauthorized. Invalid API key"
+            })
 @limiter.limit("5/minute")
 def delete_user(request: Request, username: str, user_data = get_user_role("user")):
     if user_data["role"] == "admin":
