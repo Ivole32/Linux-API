@@ -52,7 +52,7 @@ def landing_page(request: Request):
 # User routes
 @app.get("/user/user-info", tags=["User"])
 @limiter.limit("10/minute")
-def user_info(request: Request, user_data = get_user_role("user")):
+def user_info(request: Request, user_data = get_user_role("user"), description: str = "This endpoint returns the key owner's user informations."):
     return JSONResponse(content={
         "username": user_data["username"],
         "role": user_data["role"]
@@ -66,13 +66,13 @@ def admin_area(request: Request, user_data = get_user_role("admin")):
 
 @app.get("/admin/users", tags=["Admin"])
 @limiter.limit("5/minute")
-def list_users(request: Request, user_data = get_user_role("admin")):
+def list_users(request: Request, user_data = get_user_role("admin"), description: str = "This endpoint returns a list of all users with there account informations."):
     users = user_db.list_users()
     return {"users": users}
 
 @app.post("/admin/user/create", tags=["Admin"])
 @limiter.limit("5/minute")
-def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin")):
+def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin"), description: str = "This endpoint creates a new user with the specified username, role, and optional API key."):
     user = user_db.add_user(username, role, api_key=api_key)
     if not user:
         raise HTTPException(status_code=400, detail="User creation failed or user already exists")
