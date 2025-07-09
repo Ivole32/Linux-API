@@ -75,4 +75,4 @@ def create_user(request: Request, username: str, role: UserRole, api_key: str = 
     if not user:
         raise HTTPException(status_code=400, detail="User creation failed or user already exists")
 
-    return {"message": f"User {username} created successfully with role {role.value}. API-Key: {user}"}
+    return {"user": {"username": username, "role": role.value, "api_key": user}}
