@@ -91,12 +91,12 @@ class SecureUserDatabase:
     def _secure_compare(self, a: str, b: str) -> bool:
         return hmac.compare_digest(a.encode('utf-8'), b.encode('utf-8'))
     
-    def add_user(self, username: str, role: UserRole, api_key: str = "", first_run: bool = False) -> bool:
+    def add_user(self, username: str, role: UserRole, api_key: str = "", first_run: bool = False) -> str | bool:
         if api_key == "":
             api_key = self._generate_api_key()
 
         if username == "admin" and role == UserRole.ADMIN and first_run:
-            print(f"Admin key: {api_key}")
+            print(f"Init admin key: {api_key}")
 
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
@@ -118,7 +118,7 @@ class SecureUserDatabase:
                 ''', (username, role.value, api_key_hash, salt, datetime.now().isoformat(), 1))
                 
                 conn.commit()
-                return True
+                return api_key
             except sqlite3.Error:
                 return False
     

@@ -67,3 +67,12 @@ def list_users(request: Request, user_data = get_user_role("admin")):
     """Listet alle Benutzer auf (nur für Admins)."""
     users = user_db.list_users()
     return {"users": users}
+
+@app.post("/admin/users/create", tags=["Admin"])
+@limiter.limit("5/minute")
+def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin")):
+    user = user_db.add_user(username, role, api_key=api_key)
+    if not user:
+        raise HTTPException(status_code=400, detail="User creation failed or user already exists")
+
+    return {"message": f"User {username} created successfully with role {role.value}. API-Key: {user}"}
