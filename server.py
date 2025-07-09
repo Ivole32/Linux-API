@@ -70,9 +70,9 @@ def list_users(request: Request, user_data = get_user_role("admin"), description
     users = user_db.list_users()
     return {"users": users}
 
-@app.post("/admin/user/create", tags=["Admin"])
+@app.post("/admin/user/create", tags=["Admin"], description= "This endpoint creates a new user with the specified username, role, and optional API key.")
 @limiter.limit("5/minute")
-def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin"), description: str = "This endpoint creates a new user with the specified username, role, and optional API key."):
+def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin")):
     user = user_db.add_user(username, role, api_key=api_key)
     if not user:
         raise HTTPException(status_code=400, detail="User creation failed or user already exists")
