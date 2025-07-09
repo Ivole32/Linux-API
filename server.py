@@ -47,8 +47,10 @@ def get_user_role(required_role: str):
 @app.get("/", tags=["General"], description = "The landing endpoint of the API. It returns a message with the documentation link.")
 @limiter.limit("10/minute")
 def landing_page(request: Request):
-    return JSONResponse(content={"message": "Docs at /docs",
-                                  "doc-link": "/docs"})
+    return JSONResponse(content={
+        "message": "Docs at /docs",
+        "doc-link": "/docs"
+        })
 
 # User endpoints
 @app.get("/user/user-info", tags=["User"], description = "This endpoint returns the key owner's user informations.")
