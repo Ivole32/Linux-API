@@ -65,8 +65,8 @@ def landing_page(request: Request):
     tags=["User"],
     description="This endpoint returns the key owner's user informations.",
     responses={
-        200: {"description": "User information returned", "content": {}},
-        401: {"description": "Unauthorized. Invalid API key", "content": {}}
+        200: {"description": "User information returned"},
+        401: {"description": "Unauthorized. Invalid API key"}
     }
 )
 @limiter.limit("10/minute")
@@ -82,9 +82,9 @@ def user_info(request: Request, user_data = get_user_role("user")):
     tags=["Admin"],
     description="A testing endpoint",
     responses={
-        200: {"description": "You are admin!!!", "content": {}},
-        401: {"description": "Unauthorized. Invalid API key", "content": {}},
-        403: {"description": "Admin access required", "content": {}}
+        200: {"description": "You are admin!!!"},
+        401: {"description": "Unauthorized. Invalid API key"},
+        403: {"description": "Admin access required"}
     }
 )
 @limiter.limit("10/minute")
@@ -96,9 +96,9 @@ def admin_area(request: Request, user_data = get_user_role("admin")):
     tags=["Admin"],
     description="This endpoint returns a list of all users with their account informations.",
     responses={
-        200: {"description": "Users listed successfully", "content": {}},
-        401: {"description": "Unauthorized. Invalid API key", "content": {}},
-        403: {"description": "Admin access required", "content": {}}
+        200: {"description": "Users listed successfully"},
+        401: {"description": "Unauthorized. Invalid API key"},
+        403: {"description": "Admin access required"}
     }
 )
 @limiter.limit("5/minute")
@@ -111,10 +111,10 @@ def list_users(request: Request, user_data = get_user_role("admin")):
     tags=["Admin"],
     description="This endpoint creates a new user with the specified username, role, and optional API key.",
     responses={
-        200: {"description": "The user was created successfully", "content": {}},
-        400: {"description": "User creation failed or user already exists", "content": {}},
-        401: {"description": "Unauthorized. Invalid API key", "content": {}},
-        403: {"description": "Admin access required", "content": {}}
+        200: {"description": "The user was created successfully"},
+        400: {"description": "User creation failed or user already exists"},
+        401: {"description": "Unauthorized. Invalid API key"},
+        403: {"description": "Admin access required"}
     }
 )
 @limiter.limit("5/minute")
@@ -131,9 +131,9 @@ def create_user(request: Request, username: str, role: UserRole, api_key: str = 
     tags=["Admin", "User"],
     description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account.",
     responses={
-        200: {"description": "User was deleted successfully", "content": {}},
-        403: {"description": "You don't have the rights to delete that user", "content": {}},
-        401: {"description": "Unauthorized. Invalid API key", "content": {}}
+        200: {"description": "User was deleted successfully"},
+        403: {"description": "You don't have the rights to delete that user"},
+        401: {"description": "Unauthorized. Invalid API key"}
     }
 )
 @limiter.limit("5/minute")
