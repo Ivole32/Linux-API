@@ -48,8 +48,8 @@ def get_user_role(required_role: str):
 @limiter.limit("10/minute")
 def landing_page(request: Request):
     return JSONResponse(content={
-        "message": "Docs at /docs",
-        "doc-link": "/docs"
+            "message": "Docs at /docs",
+            "doc-link": "/docs"
         })
 
 # User endpoints
