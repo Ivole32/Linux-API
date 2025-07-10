@@ -102,7 +102,7 @@ def system_infos(request: Request, user_data = get_user_role("user")):
         }
 )
 @limiter.limit("20/minute")
-def list_processes(request: Request, user_data = get_user_role("user")):
+def get_processes(request: Request, user_data = get_user_role("user")):
     processes = list_processes()
     return processes
 
