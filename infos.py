@@ -22,6 +22,23 @@ def list_processes():
         processes.append(proc.info)
     return processes
 
+def get_system_uptime():
+    import time
+    boot_time = psutil.boot_time()
+    now = time.time()
+    uptime_seconds = int(now - boot_time)
+    days, remainder = divmod(uptime_seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    
+    return {
+        "days": days,
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds,
+        "full_seconds": uptime_seconds
+    }
+
 if __name__ == "__main__":
     print(get_system_infos())
     print(list_processes())
