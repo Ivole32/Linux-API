@@ -50,8 +50,7 @@ def get_user_role(required_role: str):
     description="The landing endpoint of the API. It returns a message with the documentation link.",
     responses={
         200: {"description": "The server works"}
-    },
-    response_class=Response
+    }
 )
 @limiter.limit("10/minute")
 def landing_page(request: Request):
@@ -68,8 +67,7 @@ def landing_page(request: Request):
     responses={
         200: {"description": "User information returned"},
         401: {"description": "Unauthorized. Invalid API key"}
-    },
-    response_class=Response
+    }
 )
 @limiter.limit("10/minute")
 def user_info(request: Request, user_data = get_user_role("user")):
@@ -87,8 +85,7 @@ def user_info(request: Request, user_data = get_user_role("user")):
         200: {"description": "You are admin!!!"},
         401: {"description": "Unauthorized. Invalid API key"},
         403: {"description": "Admin access required"}
-    },
-    response_class=Response
+    }
 )
 @limiter.limit("10/minute")
 def admin_area(request: Request, user_data = get_user_role("admin")):
@@ -102,8 +99,7 @@ def admin_area(request: Request, user_data = get_user_role("admin")):
         200: {"description": "Users listed successfully"},
         401: {"description": "Unauthorized. Invalid API key"},
         403: {"description": "Admin access required"}
-    },
-    response_class=Response
+    }
 )
 @limiter.limit("5/minute")
 def list_users(request: Request, user_data = get_user_role("admin")):
@@ -119,8 +115,7 @@ def list_users(request: Request, user_data = get_user_role("admin")):
         400: {"description": "User creation failed or user already exists"},
         401: {"description": "Unauthorized. Invalid API key"},
         403: {"description": "Admin access required"}
-    },
-    response_class=Response
+    }
 )
 @limiter.limit("5/minute")
 def create_user(request: Request, username: str, role: UserRole, api_key: str = "", user_data = get_user_role("admin")):
@@ -139,8 +134,7 @@ def create_user(request: Request, username: str, role: UserRole, api_key: str = 
         200: {"description": "User was deleted successfully"},
         403: {"description": "You don't have the rights to delete that user"},
         401: {"description": "Unauthorized. Invalid API key"}
-    },
-    response_class=Response
+    }
 )
 @limiter.limit("5/minute")
 def delete_user(request: Request, username: str, user_data = get_user_role("user")):
