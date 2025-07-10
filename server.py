@@ -7,7 +7,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from fastapi.responses import JSONResponse
 
 from user_database import get_user_database, UserRole, initialize_default_users
-from infos import get_system_infos, get_processes
+from infos import get_system_infos, list_processes
 
 app = FastAPI()
 
@@ -103,7 +103,7 @@ def system_infos(request: Request, user_data = get_user_role("user")):
 )
 @limiter.limit("20/minute")
 def list_processes(request: Request, user_data = get_user_role("user")):
-    processes = get_processes()
+    processes = list_processes()
     return processes
 
 # Admin endpoints
