@@ -91,7 +91,7 @@ def user_info(request: Request, user_data = get_user_role("user")):
 )
 @limiter.limit("10/minute")
 def get_uptime(request: Request, user_data = get_user_role("user")):
-    return get_system_uptime
+    return get_system_uptime()
 
 @app.get(
         "/system/processes",
