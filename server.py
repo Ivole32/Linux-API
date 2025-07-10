@@ -78,23 +78,21 @@ def user_info(request: Request, user_data = get_user_role("user")):
         "role": user_data["role"]
     })
 
+
+# System endpoints
 @app.get(
-        "/system/system-infos",
-        tags=["User"],
-        description="This endpoint returns the system information of the server.",
+        "/system/uptime",
+        tags=["System"],
+        description="This endpoint returns the system uptime in days, hours, minutes, and seconds + full seconds.",
         responses={
-            200: {"description": "System information returned"},
-            401: {"description": "Unauthorized. Invalid API key"}
+            200: {"description": "Uptime returned successfully"},
+            401: {"description": "Unauthorized. Invalid API key"},
         }
 )
-@limiter.limit("10/minute")
-def system_infos(request: Request, user_data = get_user_role("user")):
-    system_info = get_system_infos()
-    return system_info
 
 @app.get(
         "/system/processes",
-        tags=["User"],
+        tags=["System"],
         description="Returns a list of all running processes on the server with their PID, name, and status.",
         responses={
             200: {"description": "Processes listed successfully"},
@@ -105,6 +103,20 @@ def system_infos(request: Request, user_data = get_user_role("user")):
 def get_processes(request: Request, user_data = get_user_role("user")):
     processes = list_processes()
     return processes
+
+@app.get(
+        "/system/system-infos",
+        tags=["System"],
+        description="This endpoint returns the system information of the server.",
+        responses={
+            200: {"description": "System information returned"},
+            401: {"description": "Unauthorized. Invalid API key"}
+        }
+)
+@limiter.limit("10/minute")
+def system_infos(request: Request, user_data = get_user_role("user")):
+    system_info = get_system_infos()
+    return system_info
 
 # Admin endpoints
 @app.get(
