@@ -7,7 +7,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from fastapi.responses import JSONResponse
 
 from user_database import get_user_database, UserRole, initialize_default_users
-from infos import get_system_infos
+from infos import get_system_infos, get_processes
 
 app = FastAPI()
 
@@ -91,6 +91,20 @@ def user_info(request: Request, user_data = get_user_role("user")):
 def system_infos(request: Request, user_data = get_user_role("user")):
     system_info = get_system_infos()
     return system_info
+
+@app.get(
+        "/system/processes",
+        tags=["User"],
+        description="Returns a list of all running processes on the server with their PID, name, and status.",
+        responses={
+            200: {"description": "Processes listed successfully"},
+            401: {"description": "Unauthorized. Invalid API key"}
+        }
+)
+@limiter.limit("20/minute")
+def list_processes(request: Request, user_data = get_user_role("user")):
+    processes = get_processes()
+    return processes
 
 # Admin endpoints
 @app.get(

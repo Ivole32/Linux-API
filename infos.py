@@ -16,5 +16,12 @@ def get_system_infos():
 
     return system_info
 
+def list_processes():
+    processes = []
+    for proc in psutil.process_iter(['pid', 'name', 'status']):
+        processes.append(proc.info)
+    return processes
+
 if __name__ == "__main__":
     print(get_system_infos())
+    print(list_processes())
