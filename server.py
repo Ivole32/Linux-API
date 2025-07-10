@@ -5,7 +5,9 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from fastapi.responses import JSONResponse
+
 from user_database import get_user_database, UserRole, initialize_default_users
+from infos import get_system_infos
 
 app = FastAPI()
 
@@ -75,6 +77,20 @@ def user_info(request: Request, user_data = get_user_role("user")):
         "username": user_data["username"],
         "role": user_data["role"]
     })
+
+@app.get(
+        "/system/system-infos",
+        tags=["User"],
+        description="This endpoint returns the system information of the server.",
+        responses={
+            200: {"description": "System information returned"},
+            401: {"description": "Unauthorized. Invalid API key"}
+        }
+)
+@limiter.limit("10/minute")
+def system_infos(request: Request, user_data = get_user_role("user")):
+    system_info = get_system_infos()
+    return system_info
 
 # Admin endpoints
 @app.get(
