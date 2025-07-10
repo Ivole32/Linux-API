@@ -7,7 +7,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from fastapi.responses import JSONResponse
 
 from user_database import get_user_database, UserRole, initialize_default_users
-from infos import get_system_infos, list_processes
+from infos import get_system_infos, list_processes, get_system_uptime
 
 app = FastAPI()
 
@@ -89,6 +89,9 @@ def user_info(request: Request, user_data = get_user_role("user")):
             401: {"description": "Unauthorized. Invalid API key"},
         }
 )
+@limiter.limit("10/minute")
+def get_uptime(request: Request, user_data = get_user_role("user")):
+    return get_system_uptime
 
 @app.get(
         "/system/processes",
