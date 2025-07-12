@@ -1,6 +1,8 @@
+import subprocess
 import platform
 import psutil
 import pwd
+import os
 
 """from load_monitor import LoadMonitor
 
@@ -73,6 +75,20 @@ def get_system_user_infos(username):
         return None, {}
     except Exception:
         return False, {}
+    
+def get_service_informations():
+    services = []
+    init_dir = "/etc/init.d"
+    for service in os.listdir(init_dir):
+        path = os.path.join(init_dir, service)
+        if os.access(path, os.X_OK):
+            try:
+                result = subprocess.run([path, "status"], capture_output=True, text=True)
+                status = result.stdout.strip() or result.stderr.strip()
+                services.append((service, status))
+            except Exception as e:
+                services.append((service, f"Error: {e}"))
+    return services
 
 if __name__ == "__main__":
     """print(get_system_infos())
