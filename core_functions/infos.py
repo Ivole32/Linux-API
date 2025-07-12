@@ -67,7 +67,7 @@ def get_system_user_infos(username):
                 "GID": user_info.pw_gid,
                 "home_dir": user_info.pw_dir,
                 "shell": user_info.pw_shell
-            },
+            }
         }
     except KeyError:
         return None, {}

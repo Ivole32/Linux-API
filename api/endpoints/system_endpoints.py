@@ -48,9 +48,9 @@ def system_infos(request: Request, user_data = get_user_role("user")):
     return system_info
 
 @router.get(
-    "/system/system_user",
+    "/system/system-user",
     tags=["System"],
-    description="Returns informations baout a specific user account on the server like UID, GUI, shell and home home dir.",
+    description="Returns informations baout a specific user account on the server like UID, GID, shell and home home dir.",
     responses={
         200: {"description": "User informations returned successfully."},
         401: {"description": "Unauthorized. Invalid API key"},
