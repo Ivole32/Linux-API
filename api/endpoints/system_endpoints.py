@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
 from core_functions.auth import get_user_role
-from core_functions.infos import get_system_infos, list_processes, get_system_uptime
+from core_functions.infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
 from core_functions.limiter import limiter
 
 router = APIRouter()
@@ -46,3 +46,26 @@ def get_processes(request: Request, user_data = get_user_role("user")):
 def system_infos(request: Request, user_data = get_user_role("user")):
     system_info = get_system_infos()
     return system_info
+
+@router.get(
+    "/system/system_user",
+    tags=["System"],
+    description="Returns informations baout a specific user account on the server like UID, GUI, shell and home home dir.",
+    responses={
+        200: {"description": "User informations returned successfully."},
+        401: {"description": "Unauthorized. Invalid API key"},
+        404: {"description": "User not found on the system."}
+    }
+)
+@limiter.limit("5/minute")
+def system_user_infos(request: Request, username: str, user_data = get_user_role("user")):
+    return_code, user_info = get_system_user_infos(username)
+
+    if return_code == True:
+        return user_info
+    
+    elif return_code == None:
+        return HTTPException(status_code=404, detail="User not found on the system")
+    
+    else:
+        return HTTPException(status_code=500, detail="500 Internal server error")

@@ -2,7 +2,7 @@
 # Features
 - [x] system infos
 - [x] list processes
-- [ ] get infos about system user
+- [ ] get infos about system users -> In progress
 - [ ] get maintenance infos
 - [ ] get running services
 - [ ] get system logs

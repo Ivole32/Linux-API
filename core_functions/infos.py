@@ -1,10 +1,11 @@
 import platform
 import psutil
+import pwd
 
-from load_monitor import LoadMonitor
+"""from load_monitor import LoadMonitor
 
 monitor = LoadMonitor()
-monitor.start()
+monitor.start()"""
 
 def get_system_infos():
     system_info = {
@@ -56,9 +57,27 @@ def get_system_load():
        # "cpu_percent_per_core": cpu_per_core
     }
 
+def get_system_user_infos(username):
+    try:
+        user_info = pwd.getpwnam(username)
+        return True, {
+            username: {
+                "user_name" : user_info.pw_name,
+                "UID": user_info.pw_uid,
+                "GID": user_info.pw_gid,
+                "home_dir": user_info.pw_dir,
+                "shell": user_info.pw_shell
+            },
+        }
+    except KeyError:
+        return None, {}
+    except Exception:
+        return False, {}
+
 if __name__ == "__main__":
-    print(get_system_infos())
+    """print(get_system_infos())
     print(list_processes())
     while True:
         print("\n\n")
-        print(str(get_system_load()))
+        print(str(get_system_load()))"""
+    print(str(get_system_user_infos("ivo")))
