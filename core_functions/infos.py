@@ -77,7 +77,7 @@ def get_system_user_infos(username):
         return False, {}
     
 def get_service_informations():
-    services = []
+    services = {}
     init_dir = "/etc/init.d"
     for service in os.listdir(init_dir):
         path = os.path.join(init_dir, service)
@@ -86,7 +86,6 @@ def get_service_informations():
                 result = subprocess.run([path, "status"], capture_output=True, text=True)
                 status = result.stdout.strip() or result.stderr.strip()
                 description = ""
-                
                 try:
                     with open(path, "r") as f:
                         for line in f:
@@ -95,18 +94,16 @@ def get_service_informations():
                                 break
                 except Exception:
                     description = ""
-                services.append({
-                    "name": service,
+                services[service] = {
                     "status": status,
                     "description": description
-                })
+                }
             except Exception as e:
-                services.append({
-                    "name": service,
+                services[service] = {
                     "status": f"Error: {e}",
                     "description": ""
-                })
-    return services
+                }
+        return services
 
 if __name__ == "__main__":
     """print(get_system_infos())
