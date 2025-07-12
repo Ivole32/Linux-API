@@ -65,7 +65,7 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
         return user_info
     
     elif return_code == None:
-        return HTTPException(status_code=404, detail="User not found on the system")
+        raise HTTPException(status_code=404, detail="User not found on the system")
     
     else:
-        return HTTPException(status_code=500, detail="500 Internal server error")
+        raise HTTPException(status_code=500, detail="500 Internal server error")
