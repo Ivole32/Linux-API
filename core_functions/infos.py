@@ -85,9 +85,27 @@ def get_service_informations():
             try:
                 result = subprocess.run([path, "status"], capture_output=True, text=True)
                 status = result.stdout.strip() or result.stderr.strip()
-                services.append((service, status))
+                description = ""
+                
+                try:
+                    with open(path, "r") as f:
+                        for line in f:
+                            if "Description:" in line:
+                                description = line.strip().split("Description:", 1)[-1].strip()
+                                break
+                except Exception:
+                    description = ""
+                services.append({
+                    "name": service,
+                    "status": status,
+                    "description": description
+                })
             except Exception as e:
-                services.append((service, f"Error: {e}"))
+                services.append({
+                    "name": service,
+                    "status": f"Error: {e}",
+                    "description": ""
+                })
     return services
 
 if __name__ == "__main__":
