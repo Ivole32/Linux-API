@@ -103,7 +103,7 @@ def get_service_informations():
                     "status": f"Error: {e}",
                     "description": ""
                 }
-        return services
+    return services
 
 if __name__ == "__main__":
     """print(get_system_infos())
