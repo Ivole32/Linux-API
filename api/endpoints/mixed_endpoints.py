@@ -14,7 +14,7 @@ user_db = get_user_database()
     tags=["Admin", "User"],
     description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account.",
     responses={
-        200: {"description": "User was deleted successfully", "content": {}},
+        200: {"description": "User was deleted successfully"},
         403: {"description": "You don't have the rights to delete that user"},
         401: {"description": "Unauthorized. Invalid API key"}
     }
