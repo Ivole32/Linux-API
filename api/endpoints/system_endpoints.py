@@ -2,9 +2,13 @@ from fastapi import APIRouter, HTTPException, Request
 
 from core_functions.auth import get_user_role
 from core_functions.infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
+from core_functions.load_monitor import LoadMonitor
 from core_functions.limiter import limiter
 
 router = APIRouter()
+
+monitor = LoadMonitor()
+monitor.start()
 
 @router.get(
         "/system/uptime",
@@ -69,3 +73,21 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
     
     else:
         raise HTTPException(status_code=500, detail="500 Internal server error")
+    
+
+@router.get(
+        "/system/avg-load",
+        tags=["System"],
+        description="Returns the average load of the system over the last minutes.",
+        responses={
+            200: {"description": "Average load returned successfully"},
+            401: {"description": "Unauthorized. Invalid API key"},
+            404: {"description": "User not found on the system."}
+        }
+)
+@limiter.limit("5/minute")
+def avg_load(request: Request, user_data = get_user_role("user")):
+    return {
+        "average_load": monitor.get_average(),
+        "last_loads": monitor.get_last_loads(3)
+    }
