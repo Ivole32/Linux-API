@@ -86,7 +86,8 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
         }
 )
 @limiter.limit("5/minute")
-def avg_load(request: Request, user_data = get_user_role("user")):
+def avg_load(request: Request, decimal_places: int = 2, user_data = get_user_role("user")):
+    monitor.decimal_places = decimal_places
     return {
         "average_load": monitor.get_average(),
         "last_loads": monitor.get_last_loads(3)

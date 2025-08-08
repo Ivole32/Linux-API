@@ -8,6 +8,8 @@ class LoadMonitor(Thread):
         self.load_per_minute = []
         self.running = True
 
+        self.decimal_places = 2
+
     def run(self):
         while self.running:
             load1, _, _ = psutil.getloadavg()
@@ -23,7 +25,9 @@ class LoadMonitor(Thread):
         vals = self.get_last_loads(n)
         if not vals:
             return 0.0
-        return sum(vals) / len(vals)
+        
+        average = sum(vals) / len(vals)
+        return round(average, self.decimal_places)
 
     def stop(self):
         self.running = False
@@ -34,8 +38,8 @@ if __name__ == "__main__":
     try:
         while True:
             sleep(10)
-            print("Letzte 3 Load-Werte:", monitor.get_last_loads(3))
-            print("Durchschnitt (alle):", monitor.get_average())
+            print("Last 3 Load-Values:", monitor.get_last_loads(3))
+            print("Average (all):", monitor.get_average())
     except KeyboardInterrupt:
         monitor.stop()
         monitor.join()
