@@ -1,3 +1,4 @@
+from pickle import loads
 from threading import Thread
 import psutil
 from time import sleep
@@ -19,7 +20,8 @@ class LoadMonitor(Thread):
     def get_last_loads(self, n=None):
         if n is None or n > len(self.load_per_minute):
             n = len(self.load_per_minute)
-        return self.load_per_minute[-n:]
+
+        return [round(load, self.decimal_places) for load in self.load_per_minute[-n:]]
 
     def get_average(self, n=None):
         vals = self.get_last_loads(n)
