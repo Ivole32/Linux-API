@@ -90,5 +90,6 @@ def avg_load(request: Request, decimal_places: int = 2, user_data = get_user_rol
     monitor.decimal_places = decimal_places
     return {
         "average_load": monitor.get_average(),
-        "last_loads": monitor.get_last_loads(3)
+        "last_loads": monitor.get_last_loads(3),
+        "cpu_usage": monitor.get_cpu()
     }

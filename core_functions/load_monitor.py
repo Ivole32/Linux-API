@@ -30,6 +30,9 @@ class LoadMonitor(Thread):
         
         average = sum(vals) / len(vals)
         return round(average, self.decimal_places)
+    
+    def get_cpu(self) -> None:
+        return psutil.cpu_percent(interval=1, percpu=True)
 
     def stop(self):
         self.running = False
