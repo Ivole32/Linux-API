@@ -21,7 +21,7 @@ class LoadMonitor(Thread):
             load1, _, _ = psutil.getloadavg()
             self.system_load_per_minute.append(load1)
 
-            cpu_load = psutil.cpu_percent(interval=1, percpu=True)
+            cpu_load = psutil.cpu_percent(interval=1, percpu=False)
             self.cpu_loads_per_minute.append(cpu_load)
 
             self._system_load_average_cache = None
