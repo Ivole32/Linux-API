@@ -12,9 +12,9 @@ class LoadMonitor(Thread):
         self.cpu_loads_per_minute = []
         self._cpu_load_average_cache = None
 
-        self.running = True
-
         self.__decimal_places = 2
+
+        self.running = True
 
     def run(self):
         while self.running:
@@ -24,8 +24,7 @@ class LoadMonitor(Thread):
             cpu_load = psutil.cpu_percent(interval=1, percpu=False)
             self.cpu_loads_per_minute.append(cpu_load)
 
-            self._system_load_average_cache = None
-            self._cpu_load_average_cache = None
+            self.__reset_caches()
             sleep(60)
 
     def stop(self):

@@ -90,7 +90,11 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
 def avg_load(request: Request, decimal_places: int = 2, user_data = get_user_role("user")):
     monitor.set_decimal_place_value(decimal_places)
     return {
-        "average_load": monitor.get_average_system_load(),
-        "last_loads": monitor.get_last_system_loads(3),
-        "cpu_average_load": monitor.get_average_cpu_load()
+        "system": {
+            "average_load": monitor.get_average_system_load(),
+            "last_loads": monitor.get_last_system_loads(3)
+        },
+        "cpu": {
+            "average_load": monitor.get_average_cpu_load()
+        }
     }
