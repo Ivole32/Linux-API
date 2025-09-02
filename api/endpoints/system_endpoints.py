@@ -9,6 +9,7 @@ router = APIRouter()
 
 monitor = LoadMonitor()
 monitor.start()
+monitor.set_decimal_place_value(2)
 
 @router.get(
         "/system/uptime",
@@ -89,7 +90,7 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
 def avg_load(request: Request, decimal_places: int = 2, user_data = get_user_role("user")):
     monitor.decimal_places = decimal_places
     return {
-        "average_load": monitor.get_average(),
-        "last_loads": monitor.get_last_loads(3),
+        "average_load": monitor.get_average_system_load(),
+        "last_loads": monitor.get_last_system_loads(3),
         "cpu_average_load": monitor.get_average_cpu_load()
     }

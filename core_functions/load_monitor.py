@@ -6,11 +6,11 @@ from time import sleep
 class LoadMonitor(Thread):
     def __init__(self):
         super().__init__()
-        self.load_per_minute = []
+        self.system_load_per_minute = []
+        self._system_load_average_cache = None
 
-        self._average_cache = None
-
-        self.cpu_load_per_minute = []
+        self.cpu_loads_per_minute = []
+        self._cpu_load_average_cache = None
 
         self.running = True
 
@@ -19,40 +19,58 @@ class LoadMonitor(Thread):
     def run(self):
         while self.running:
             load1, _, _ = psutil.getloadavg()
-            self.load_per_minute.append(load1)
+            self.system_load_per_minute.append(load1)
 
             cpu_load = psutil.cpu_percent(interval=1, percpu=True)
-            self.cpu_load_per_minute.append(cpu_load)
+            self.cpu_loads_per_minute.append(cpu_load)
 
-            self._average_cache = None
+            self._system_load_average_cache = None
+            self._cpu_load_average_cache = None
             sleep(60)
 
-    def get_last_loads(self, n=None):
-        if n is None or n > len(self.load_per_minute):
-            n = len(self.load_per_minute)
+    def stop(self):
+        self.running = False
 
-        return [round(load, self.decimal_places) for load in self.load_per_minute[-n:]]
+    def __reset_caches(self):
+        self._system_load_average_cache = None
+        self._cpu_load_average_cache = None
 
-    def get_average(self, n=None):
-        if self._average_cache is not None:
-            return self._average_cache
+    def set_decimal_place_value(self, decimal_places):
+        self.decimal_places = decimal_places
+        self.__reset_caches()
 
-        vals = self.get_last_loads(n)
+    def get_last_system_loads(self, n=None):
+        if n is None or n > len(self.system_load_per_minute):
+            n = len(self.system_load_per_minute)
+
+        return [round(load, self.decimal_places) for load in self.system_load_per_minute[-n:]]
+
+    def get_average_system_load(self, n=None):
+        if self._system_load_average_cache is not None:
+            return self._system_load_average_cache
+
+        vals = self.get_last_system_loads(n)
         if not vals:
             return 0.0
 
         average = sum(vals) / len(vals)
         average = round(average, self.decimal_places)
 
-        self._average_cache = average
+        self._system_load_average_cache = average
         return average
 
-    def get_average_cpu_load(self) -> None:
-        for cpu_load in self.cpu_load_per_minute:
-            return round(sum(cpu_load) / len(cpu_load), self.decimal_places)
+    def get_average_cpu_load(self):
+        if self._cpu_load_average_cache is not None:
+            return self._cpu_load_average_cache
+        
+        if not self.cpu_loads_per_minute:
+            return 0.0
 
-    def stop(self):
-        self.running = False
+        average = sum(self.cpu_loads_per_minute) / len(self.cpu_loads_per_minute)
+        average = round(average, self.decimal_places)
+
+        self._cpu_load_average_cache = average
+        return average
 
 if __name__ == "__main__":
     monitor = LoadMonitor()
@@ -60,8 +78,9 @@ if __name__ == "__main__":
     try:
         while True:
             sleep(10)
-            print("Last 3 Load-Values:", monitor.get_last_loads(3))
-            print("Average (all):", monitor.get_average())
+            print("Last 3 Load-Values:", monitor.get_last_system_loads(3))
+            print("Average (all):", monitor.get_average_system_load())
+            print("Average CPU Load:", monitor.get_average_cpu_load())
     except KeyboardInterrupt:
         monitor.stop()
         monitor.join()
