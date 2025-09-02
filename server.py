@@ -9,19 +9,9 @@ from api.endpoints.mixed_endpoints import router as mixed_router
 
 from core_functions.limiter import limiter
 
-
-from fastapi import FastAPI, Depends, Security
-from fastapi.security.api_key import APIKeyHeader
-from fastapi.openapi.docs import get_swagger_ui_html
-
 app = FastAPI()
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
-
-API_KEY_NAME = "X-API-Key"
-DEMO_KEY = "my-demo-key"
-
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
