@@ -14,7 +14,7 @@ class LoadMonitor(Thread):
 
         self.running = True
 
-        self.decimal_places = 2
+        self.__decimal_places = 2
 
     def run(self):
         while self.running:
@@ -36,14 +36,14 @@ class LoadMonitor(Thread):
         self._cpu_load_average_cache = None
 
     def set_decimal_place_value(self, decimal_places):
-        self.decimal_places = decimal_places
+        self.__decimal_places = decimal_places
         self.__reset_caches()
 
     def get_last_system_loads(self, n=None):
         if n is None or n > len(self.system_load_per_minute):
             n = len(self.system_load_per_minute)
 
-        return [round(load, self.decimal_places) for load in self.system_load_per_minute[-n:]]
+        return [round(load, self.__decimal_places) for load in self.system_load_per_minute[-n:]]
 
     def get_average_system_load(self, n=None):
         if self._system_load_average_cache is not None:
@@ -54,7 +54,7 @@ class LoadMonitor(Thread):
             return 0.0
 
         average = sum(vals) / len(vals)
-        average = round(average, self.decimal_places)
+        average = round(average, self.__decimal_places)
 
         self._system_load_average_cache = average
         return average
@@ -67,7 +67,7 @@ class LoadMonitor(Thread):
             return 0.0
 
         average = sum(self.cpu_loads_per_minute) / len(self.cpu_loads_per_minute)
-        average = round(average, self.decimal_places)
+        average = round(average, self.__decimal_places)
 
         self._cpu_load_average_cache = average
         return average
