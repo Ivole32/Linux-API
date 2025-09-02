@@ -16,10 +16,14 @@ app.add_middleware(SlowAPIMiddleware)
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
     response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Expires"] = "0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
     response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["Referrer-Policy"] = "no-referrer"
-    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
     return response
 
 app.include_router(unauthenticated_router)

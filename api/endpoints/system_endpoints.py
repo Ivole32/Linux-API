@@ -1,10 +1,15 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
 from core_functions.auth import get_user_role
-from core_functions.infos import get_system_infos, list_processes, get_system_uptime
+from core_functions.infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
+from core_functions.load_monitor import LoadMonitor
 from core_functions.limiter import limiter
 
 router = APIRouter()
+
+monitor = LoadMonitor()
+monitor.start()
+monitor.set_decimal_place_value(2)
 
 @router.get(
         "/system/uptime",
@@ -46,3 +51,50 @@ def get_processes(request: Request, user_data = get_user_role("user")):
 def system_infos(request: Request, user_data = get_user_role("user")):
     system_info = get_system_infos()
     return system_info
+
+@router.get(
+    "/system/system-user",
+    tags=["System"],
+    description="Returns informations baout a specific user account on the server like UID, GID, shell and home home dir.",
+    responses={
+        200: {"description": "User informations returned successfully."},
+        401: {"description": "Unauthorized. Invalid API key"},
+        404: {"description": "User not found on the system."}
+    }
+)
+@limiter.limit("5/minute")
+def system_user_infos(request: Request, username: str, user_data = get_user_role("user")):
+    return_code, user_info = get_system_user_infos(username)
+
+    if return_code == True:
+        return user_info
+    
+    elif return_code == None:
+        raise HTTPException(status_code=404, detail="User not found on the system")
+    
+    else:
+        raise HTTPException(status_code=500, detail="500 Internal server error")
+    
+
+@router.get(
+        "/system/avg-load",
+        tags=["System"],
+        description="Returns the average load of the system over the last minutes.",
+        responses={
+            200: {"description": "Average load returned successfully"},
+            401: {"description": "Unauthorized. Invalid API key"},
+            404: {"description": "User not found on the system."}
+        }
+)
+@limiter.limit("5/minute")
+def avg_load(request: Request, decimal_places: int = 2, user_data = get_user_role("user")):
+    monitor.set_decimal_place_value(decimal_places)
+    return {
+        "system": {
+            "average_load": monitor.get_average_system_load(),
+            "last_loads": monitor.get_last_system_loads(3)
+        },
+        "cpu": {
+            "average_load": monitor.get_average_cpu_load()
+        }
+    }

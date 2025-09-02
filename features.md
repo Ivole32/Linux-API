@@ -2,9 +2,9 @@
 # Features
 - [x] system infos
 - [x] list processes
-- [ ] get infos about system user
+- [x] get infos about system users
 - [ ] get maintenance infos
-- [ ] get running services
+- [ ] get running services -> In progress
 - [ ] get system logs
 - [x] get system uptime
-- [ ] get system load (now, 1H, 5H, 24H, 1D, 7D)
+- [ ] get system load (now, 1H, 5H, 24H, 1D, 7D) -> In progress
