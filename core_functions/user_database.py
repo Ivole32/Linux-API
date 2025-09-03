@@ -5,8 +5,11 @@ import secrets
 import sqlite3
 from enum import Enum
 from datetime import datetime
+from dotenv import load_dotenv
 from dataclasses import dataclass
 from typing import Optional, Dict, List
+
+load_dotenv()
 
 DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 _user_db_instance = None
@@ -267,7 +270,7 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
         if DEMO_MODE:
             demo_api_key = db.add_user("admin", UserRole.ADMIN, first_run=first_run)
         else:
-            demo_api_key = ""
+            demo_api_key = ...
             db.add_user("admin", UserRole.ADMIN, first_run=first_run)
     
     return db, demo_api_key
