@@ -274,6 +274,8 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
 def get_user_database(db_path: str = "users.db") -> SecureUserDatabase:
     global _user_db_instance
 
+    demo_api_key = ""
+
     if DEMO_MODE:
         db_path = ":memory:"
 
