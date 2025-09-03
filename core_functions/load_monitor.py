@@ -1,7 +1,6 @@
-from pickle import loads
-from threading import Thread
 import psutil
 from time import sleep
+from threading import Thread
 
 class LoadMonitor(Thread):
     def __init__(self):

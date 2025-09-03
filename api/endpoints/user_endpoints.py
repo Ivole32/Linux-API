@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-from core_functions.auth import get_user_role
 from core_functions.limiter import limiter
+from core_functions.auth import get_user_role
 
 router = APIRouter()
 

@@ -1,13 +1,15 @@
+import os
+import hmac
 import hashlib
 import secrets
-import hmac
 import sqlite3
-import json
-from typing import Optional, Dict, List
 from enum import Enum
-from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
+from dataclasses import dataclass
+from typing import Optional, Dict, List
+
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
+_user_db_instance = None
 
 class UserRole(Enum):
     USER = "user"
@@ -25,10 +27,11 @@ class User:
 
 class SecureUserDatabase:
     def __init__(self, db_path: str = "users.db", pepper: Optional[str] = None):
+
         self.db_path = db_path
         self.pepper = pepper or secrets.token_hex(32)
         
-        self.iterations = 100000
+        self.iterations = 600000
         self.salt_length = 32
         self.hash_length = 64
         
@@ -37,7 +40,10 @@ class SecureUserDatabase:
     def _init_database(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            
+
+            conn.execute("PRAGMA journal_mode=WAL;")
+            conn.execute("PRAGMA synchronous=NORMAL;")
+
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     username TEXT PRIMARY KEY,
@@ -257,14 +263,21 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
     db = SecureUserDatabase(db_path)
 
     if not db.get_user("admin"):
-        db.add_user("admin", UserRole.ADMIN, first_run=first_run)
+        if DEMO_MODE:
+            demo_api_key = db.add_user("admin", UserRole.ADMIN, first_run=first_run)
+        else:
+            demo_api_key = ""
+            db.add_user("admin", UserRole.ADMIN, first_run=first_run)
     
-    return db
-
-_user_db_instance = None
+    return db, demo_api_key
 
 def get_user_database(db_path: str = "users.db") -> SecureUserDatabase:
     global _user_db_instance
+
+    if DEMO_MODE:
+        db_path = ":memory:"
+
     if _user_db_instance is None:
-        _user_db_instance = initialize_default_users(db_path, first_run=True)
-    return _user_db_instance
+        _user_db_instance, demo_api_key = initialize_default_users(db_path, first_run=True)
+
+    return _user_db_instance, demo_api_key

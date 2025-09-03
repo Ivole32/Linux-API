@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request, HTTPException
 
-from core_functions.auth import get_user_role
-from core_functions.infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
-from core_functions.load_monitor import LoadMonitor
 from core_functions.limiter import limiter
+from core_functions.auth import get_user_role
+from core_functions.load_monitor import LoadMonitor
+from core_functions.infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
 
 router = APIRouter()
 
