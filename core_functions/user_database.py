@@ -261,6 +261,7 @@ class SecureUserDatabase:
 
 def initialize_default_users(db_path: str = "users.db", first_run: bool = False) -> SecureUserDatabase:
     db = SecureUserDatabase(db_path)
+    demo_api_key = ...
 
     if not db.get_user("admin"):
         if DEMO_MODE:
@@ -274,7 +275,7 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
 def get_user_database(db_path: str = "users.db") -> SecureUserDatabase:
     global _user_db_instance
 
-    demo_api_key = ""
+    demo_api_key = ...
 
     if DEMO_MODE:
         db_path = ":memory:"
