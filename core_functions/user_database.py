@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from dataclasses import dataclass
 from typing import Optional, Dict, List
 
-load_dotenv()
+load_dotenv(dotenv_path="config.env")
 
 DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 _user_db_instance = None
