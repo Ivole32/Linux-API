@@ -3,6 +3,7 @@ import secrets
 import hmac
 import sqlite3
 import json
+import os
 from typing import Optional, Dict, List
 from enum import Enum
 from dataclasses import dataclass
@@ -32,10 +33,22 @@ class SecureUserDatabase:
         self.salt_length = 32
         self.hash_length = 64
         
+        # Keep persistent connection for in-memory databases
+        self._persistent_conn = None
+        if db_path == ":memory:":
+            self._persistent_conn = sqlite3.connect(db_path)
+        
         self._init_database()
     
     def _init_database(self):
-        with sqlite3.connect(self.db_path) as conn:
+        if self._persistent_conn:
+            # Use persistent connection for in-memory database
+            conn = self._persistent_conn
+        else:
+            # Use context manager for file database
+            conn = sqlite3.connect(self.db_path)
+        
+        try:
             cursor = conn.cursor()
             
             cursor.execute('''
@@ -67,6 +80,10 @@ class SecureUserDatabase:
                              ('pepper', self.pepper))
             
             conn.commit()
+        finally:
+            # Only close connection for file databases
+            if not self._persistent_conn:
+                conn.close()
     
     def _generate_api_key(self) -> str:
         key = secrets.token_hex(64)
@@ -98,7 +115,12 @@ class SecureUserDatabase:
         if username == "admin" and role == UserRole.ADMIN and first_run:
             print(f"Init admin key: {api_key}")
 
-        with sqlite3.connect(self.db_path) as conn:
+        if self._persistent_conn:
+            conn = self._persistent_conn
+        else:
+            conn = sqlite3.connect(self.db_path)
+        
+        try:
             cursor = conn.cursor()
             
             cursor.execute('SELECT username FROM users WHERE username = ?', (username,))
@@ -121,9 +143,17 @@ class SecureUserDatabase:
                 return api_key
             except sqlite3.Error:
                 return False
+        finally:
+            if not self._persistent_conn:
+                conn.close()
     
     def _api_key_exists(self, api_key: str) -> bool:
-        with sqlite3.connect(self.db_path) as conn:
+        if self._persistent_conn:
+            conn = self._persistent_conn
+        else:
+            conn = sqlite3.connect(self.db_path)
+        
+        try:
             cursor = conn.cursor()
             cursor.execute('SELECT api_key_hash, salt FROM users')
             
@@ -133,9 +163,17 @@ class SecureUserDatabase:
                     return True
             
             return False
+        finally:
+            if not self._persistent_conn:
+                conn.close()
     
     def verify_api_key(self, api_key: str) -> Optional[tuple[str, UserRole]]:
-        with sqlite3.connect(self.db_path) as conn:
+        if self._persistent_conn:
+            conn = self._persistent_conn
+        else:
+            conn = sqlite3.connect(self.db_path)
+        
+        try:
             cursor = conn.cursor()
             cursor.execute('''
                 SELECT username, role, api_key_hash, salt 
@@ -157,9 +195,17 @@ class SecureUserDatabase:
                     return (username, UserRole(role))
             
             return None
+        finally:
+            if not self._persistent_conn:
+                conn.close()
     
     def get_user(self, username: str) -> Optional[User]:
-        with sqlite3.connect(self.db_path) as conn:
+        if self._persistent_conn:
+            conn = self._persistent_conn
+        else:
+            conn = sqlite3.connect(self.db_path)
+        
+        try:
             cursor = conn.cursor()
             cursor.execute('''
                 SELECT username, role, api_key_hash, salt, created_at, last_login, is_active
@@ -182,6 +228,9 @@ class SecureUserDatabase:
                 last_login=datetime.fromisoformat(last_login) if last_login else None,
                 is_active=bool(is_active)
             )
+        finally:
+            if not self._persistent_conn:
+                conn.close()
     
     def deactivate_user(self, username: str) -> bool:
         with sqlite3.connect(self.db_path) as conn:
@@ -254,6 +303,10 @@ class SecureUserDatabase:
             return users
 
 def initialize_default_users(db_path: str = "users.db", first_run: bool = False) -> SecureUserDatabase:
+    # Check for DEMO_MODE environment variable
+    if os.getenv('DEMO_MODE', '').lower() in ('true', '1', 'yes'):
+        db_path = ":memory:"
+    
     db = SecureUserDatabase(db_path)
 
     if not db.get_user("admin"):
@@ -265,6 +318,11 @@ _user_db_instance = None
 
 def get_user_database(db_path: str = "users.db") -> SecureUserDatabase:
     global _user_db_instance
+    
+    # Check for DEMO_MODE environment variable
+    if os.getenv('DEMO_MODE', '').lower() in ('true', '1', 'yes'):
+        db_path = ":memory:"
+    
     if _user_db_instance is None:
         _user_db_instance = initialize_default_users(db_path, first_run=True)
     return _user_db_instance
