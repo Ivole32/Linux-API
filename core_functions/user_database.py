@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
+from .config import get_config
+
 class UserRole(Enum):
     USER = "user"
     ADMIN = "admin"
@@ -303,8 +305,9 @@ class SecureUserDatabase:
             return users
 
 def initialize_default_users(db_path: str = "users.db", first_run: bool = False) -> SecureUserDatabase:
-    # Check for DEMO_MODE environment variable
-    if os.getenv('DEMO_MODE', '').lower() in ('true', '1', 'yes'):
+    # Check for DEMO_MODE in config.env file (with environment variable fallback)
+    config = get_config()
+    if config.get_bool('DEMO_MODE', default=False, fallback_to_env=True):
         db_path = ":memory:"
     
     db = SecureUserDatabase(db_path)
@@ -319,8 +322,9 @@ _user_db_instance = None
 def get_user_database(db_path: str = "users.db") -> SecureUserDatabase:
     global _user_db_instance
     
-    # Check for DEMO_MODE environment variable
-    if os.getenv('DEMO_MODE', '').lower() in ('true', '1', 'yes'):
+    # Check for DEMO_MODE in config.env file (with environment variable fallback)  
+    config = get_config()
+    if config.get_bool('DEMO_MODE', default=False, fallback_to_env=True):
         db_path = ":memory:"
     
     if _user_db_instance is None:
