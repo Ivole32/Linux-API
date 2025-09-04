@@ -11,6 +11,8 @@ from typing import Optional, Dict, List
 
 load_dotenv(dotenv_path="config.env")
 
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
+
 _user_db_instance = None
 
 class UserRole(Enum):
@@ -269,7 +271,6 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
         if DEMO_MODE:
             demo_api_key = db.add_user("admin", UserRole.ADMIN, first_run=first_run)
         else:
-            demo_api_key = ...
             db.add_user("admin", UserRole.ADMIN, first_run=first_run)
     
     return db, demo_api_key
@@ -277,12 +278,7 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
 def get_user_database(db_path: str = "users.db") -> SecureUserDatabase | str:
     global _user_db_instance
 
-    DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
-
     demo_api_key = ...
-
-    if DEMO_MODE:
-        db_path = ":memory:"
 
     if _user_db_instance is None:
         _user_db_instance, demo_api_key = initialize_default_users(db_path=db_path, first_run=True)
