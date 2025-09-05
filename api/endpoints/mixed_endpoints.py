@@ -1,13 +1,13 @@
-from fastapi import HTTPException, APIRouter, Request
 from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Request, HTTPException
 
+from core_functions.limiter import limiter
 from core_functions.auth import get_user_role
 from core_functions.user_database import get_user_database
-from core_functions.limiter import limiter
 
 router = APIRouter()
 
-user_db = get_user_database()
+user_db, _ = get_user_database()
 
 @router.delete(
     "/user/delete",
