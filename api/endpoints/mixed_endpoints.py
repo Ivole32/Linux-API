@@ -7,7 +7,7 @@ from core_functions.user_database import get_user_database
 
 router = APIRouter()
 
-user_db = get_user_database()
+user_db, _ = get_user_database()
 
 @router.delete(
     "/user/delete",

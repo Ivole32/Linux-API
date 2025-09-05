@@ -4,7 +4,7 @@ from core_functions.limiter import limiter
 from core_functions.auth import get_user_role
 from core_functions.user_database import get_user_database, UserRole
 
-user_db = get_user_database()
+user_db, _ = get_user_database()
 
 router = APIRouter()
 
