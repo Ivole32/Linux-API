@@ -275,14 +275,8 @@ def initialize_default_users(db_path: str = "users.db", first_run: bool = False)
     db = SecureUserDatabase(db_path=db_path)
     demo_api_key = ...
 
-    if DEMO_MODE:
-        print("Demo mode is enabled, resetting user database and creating default admin user with a new API key.")
-        reset_database(db_path=db_path)
+    if not db.get_user("admin"):
         demo_api_key = db.add_user("admin", UserRole.ADMIN, first_run=first_run)
-
-    else:
-        if not db.get_user("admin"):
-            demo_api_key = db.add_user("admin", UserRole.ADMIN, first_run=first_run)
     
     return db, demo_api_key
 
@@ -290,6 +284,11 @@ def get_user_database(db_path: str = "users.db") -> SecureUserDatabase | str:
     global _user_db_instance
 
     demo_api_key = ...
+
+    if DEMO_MODE:
+        print("Demo mode is enabled, resetting user database and creating default admin user with a new API key.")
+        reset_database(db_path=db_path)
+        _user_db_instance = None
 
     if _user_db_instance is None:
         _user_db_instance, demo_api_key = initialize_default_users(db_path=db_path, first_run=True)
