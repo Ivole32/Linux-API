@@ -263,13 +263,27 @@ class SecureUserDatabase:
             
             return users
 
+def reset_database(db_path: str = "users.db") -> bool:
+    try:
+        if os.path.exists(db_path):
+            os.remove(db_path)
+        return True
+    except Exception:
+        return False
+
 def initialize_default_users(db_path: str = "users.db", first_run: bool = False) -> SecureUserDatabase | str:
     db = SecureUserDatabase(db_path=db_path)
     demo_api_key = ...
 
-    if not db.get_user("admin"):
-        if DEMO_MODE:
+    if DEMO_MODE:
+        print("Demo mode is enabled, resetting user database and creating default admin user with a new API key.")
+        reset_database(db_path=db_path)
+        demo_api_key = db.add_user("admin", UserRole.ADMIN, first_run=first_run)
+
+    else:
+        if not db.get_user("admin"):
             demo_api_key = db.add_user("admin", UserRole.ADMIN, first_run=first_run)
+
         else:
             db.add_user("admin", UserRole.ADMIN, first_run=first_run)
     
