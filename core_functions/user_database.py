@@ -266,11 +266,13 @@ class SecureUserDatabase:
             return users
 
 def reset_database(db_path: str = "users.db") -> bool:
+    global resetted_database
+
     try:
         if os.path.exists(db_path):
             os.remove(db_path)
 
-        reset_database = True
+        resetted_database = True
         return True
     except Exception:
         return False
