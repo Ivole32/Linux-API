@@ -13,6 +13,8 @@ load_dotenv(dotenv_path="config.env")
 
 DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 
+resetted_database = False
+
 _user_db_instance = None
 
 class UserRole(Enum):
@@ -267,6 +269,8 @@ def reset_database(db_path: str = "users.db") -> bool:
     try:
         if os.path.exists(db_path):
             os.remove(db_path)
+
+        reset_database = True
         return True
     except Exception:
         return False
@@ -285,7 +289,7 @@ def get_user_database(db_path: str = "users.db") -> SecureUserDatabase | str:
 
     demo_api_key = ...
 
-    if DEMO_MODE:
+    if DEMO_MODE and not resetted_database:
         print("Demo mode is enabled, resetting user database and creating default admin user with a new API key.")
         reset_database(db_path=db_path)
         _user_db_instance = None
