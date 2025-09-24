@@ -61,7 +61,7 @@ class LoadMonitor(Thread):
         if n is None or n > len(self.cpu_loads_per_minute):
             n = len(self.cpu_loads_per_minute)
 
-        return [round(load, self.__decimal_places) for load in self.cpu_loads_per_minute[-n:]]
+        return [round(load / 100, self.__decimal_places) for load in self.cpu_loads_per_minute[-n:]]
 
     def get_average_cpu_load(self):
         if self._cpu_load_average_cache is not None:
@@ -71,7 +71,7 @@ class LoadMonitor(Thread):
             return 0.0
 
         average = sum(self.cpu_loads_per_minute) / len(self.cpu_loads_per_minute)
-        average = round(average, self.__decimal_places)
+        average = round(average / 100, self.__decimal_places)
 
         self._cpu_load_average_cache = average
         return average
