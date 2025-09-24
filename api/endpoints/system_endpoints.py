@@ -14,38 +14,10 @@ monitor.set_decimal_place_value(2)
 @router.get(
         "/system/uptime",
         tags=["System"],
-        description="Returns the system uptime in seconds.",
+        description="This endpoint returns the system uptime in days, hours, minutes, and seconds + full seconds.",
         responses={
-            200: {
-                "description": "System uptime returned",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Success": {
-                                "summary": "Uptime",
-                                "value": {
-                                    "uptime_seconds": 123456
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            401: {
-                "description": "Unauthorized. Invalid API key",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Unauthorized": {
-                                "summary": "Missing or invalid API key",
-                                "value": {
-                                    "detail": "Unauthorized"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            200: {"description": "Uptime returned successfully"},
+            401: {"description": "Unauthorized. Invalid API key"},
         }
 )
 @limiter.limit("10/minute")
@@ -55,39 +27,10 @@ def get_uptime(request: Request, user_data = get_user_role("user")):
 @router.get(
         "/system/processes",
         tags=["System"],
-        description="Returns a list of currently running processes.",
+        description="Returns a list of all running processes on the server with their PID, name, and status.",
         responses={
-            200: {
-                "description": "Process list returned",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Success": {
-                                "summary": "Process list",
-                                "value": [
-                                    {"pid": 1, "name": "init"},
-                                    {"pid": 123, "name": "python"}
-                                ]
-                            }
-                        }
-                    }
-                }
-            },
-            401: {
-                "description": "Unauthorized. Invalid API key",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Unauthorized": {
-                                "summary": "Missing or invalid API key",
-                                "value": {
-                                    "detail": "Unauthorized"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            200: {"description": "Processes listed successfully"},
+            401: {"description": "Unauthorized. Invalid API key"}
         }
 )
 @limiter.limit("20/minute")
@@ -98,41 +41,10 @@ def get_processes(request: Request, user_data = get_user_role("user")):
 @router.get(
         "/system/system-infos",
         tags=["System"],
-        description="Returns detailed system information including CPU, memory, disk, and OS details.",
+        description="This endpoint returns the system information of the server.",
         responses={
-            200: {
-                "description": "System information returned",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Success": {
-                                "summary": "System info",
-                                "value": {
-                                    "cpu": "Intel Xeon",
-                                    "memory": "16GB",
-                                    "disk": "512GB SSD",
-                                    "os": "Ubuntu 22.04"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            401: {
-                "description": "Unauthorized. Invalid API key",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Unauthorized": {
-                                "summary": "Missing or invalid API key",
-                                "value": {
-                                    "detail": "Unauthorized"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            200: {"description": "System information returned"},
+            401: {"description": "Unauthorized. Invalid API key"}
         }
 )
 @limiter.limit("10/minute")
@@ -143,39 +55,11 @@ def system_infos(request: Request, user_data = get_user_role("user")):
 @router.get(
     "/system/system-user",
     tags=["System"],
-    description="Returns information about the current system user.",
+    description="Returns informations baout a specific user account on the server like UID, GID, shell and home home dir.",
     responses={
-        200: {
-            "description": "System user info returned",
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "Success": {
-                            "summary": "System user info",
-                            "value": {
-                                "username": "ubuntu",
-                                "uid": 1000
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        401: {
-            "description": "Unauthorized. Invalid API key",
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "Unauthorized": {
-                            "summary": "Missing or invalid API key",
-                            "value": {
-                                "detail": "Unauthorized"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        200: {"description": "User informations returned successfully."},
+        401: {"description": "Unauthorized. Invalid API key"},
+        404: {"description": "User not found on the system."}
     }
 )
 @limiter.limit("5/minute")
@@ -195,40 +79,11 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
 @router.get(
         "/system/avg-load",
         tags=["System"],
-        description="Returns system load averages for 1, 5, and 15 minutes.",
+        description="Returns the average load of the system over the last minutes.",
         responses={
-            200: {
-                "description": "System load averages returned",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Success": {
-                                "summary": "Load averages",
-                                "value": {
-                                    "load_1min": 0.12,
-                                    "load_5min": 0.08,
-                                    "load_15min": 0.05
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            401: {
-                "description": "Unauthorized. Invalid API key",
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            "Unauthorized": {
-                                "summary": "Missing or invalid API key",
-                                "value": {
-                                    "detail": "Unauthorized"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            200: {"description": "Average load returned successfully"},
+            401: {"description": "Unauthorized. Invalid API key"},
+            404: {"description": "User not found on the system."}
         }
 )
 @limiter.limit("5/minute")

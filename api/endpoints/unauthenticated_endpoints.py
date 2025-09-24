@@ -7,24 +7,10 @@ router = APIRouter()
 
 @router.get(
     "/",
-    tags=["Public"],
-    description="Welcome to Linux-API. Use `/docs` for interactive API documentation.",
+    tags=["General"],
+    description="The landing endpoint of the API. It returns a message with the documentation link.",
     responses={
-        200: {
-            "description": "Landing page",
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "Success": {
-                            "summary": "Landing page",
-                            "value": {
-                                "detail": "Welcome to Linux-API"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        200: {"description": "The server works"}
     }
 )
 @limiter.limit("10/minute")
