@@ -10,7 +10,17 @@ router = APIRouter()
     tags=["General"],
     description="The landing endpoint of the API. It returns a message with the documentation link.",
     responses={
-        200: {"description": "The server works"}
+        200: {
+            "description": "The server works",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Docs at /docs",
+                        "doc-link": "/docs"
+                    }
+                }
+            }
+        }
     }
 )
 @limiter.limit("10/minute")

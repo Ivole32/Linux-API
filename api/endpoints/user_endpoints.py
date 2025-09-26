@@ -15,14 +15,9 @@ router = APIRouter()
             "description": "User information returned",
             "content": {
                 "application/json": {
-                    "examples": {
-                        "Success": {
-                            "summary": "Valid API key",
-                            "value": {
-                                "username": "testuser",
-                                "role": "user"
-                            }
-                        }
+                    "example": {
+                        "username": "testuser",
+                        "role": "user"
                     }
                 }
             }
@@ -31,14 +26,15 @@ router = APIRouter()
             "description": "Unauthorized. Invalid API key",
             "content": {
                 "application/json": {
-                    "examples": {
-                        "Unauthorized": {
-                            "summary": "Missing or invalid API key",
-                            "value": {
-                                "detail": "Invalid API key"
-                            }
-                        }
-                    }
+                    "example": {"detail": "Invalid API key"}
+                }
+            }
+        },
+        403: {
+            "description": "Forbidden. Not enough rights",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Not enough rights"}
                 }
             }
         }

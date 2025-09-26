@@ -14,9 +14,30 @@ user_db, _ = get_user_database()
     tags=["Admin", "User"],
     description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account.",
     responses={
-        200: {"description": "User was deleted successfully"},
-        403: {"description": "You don't have the rights to delete that user"},
-        401: {"description": "Unauthorized. Invalid API key"}
+        200: {
+            "description": "User was deleted successfully",
+            "content": {
+                "application/json": {
+                    "example": {"status": "success"}
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized. Invalid API key",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Invalid API key"}
+                }
+            }
+        },
+        403: {
+            "description": "You don't have the rights to delete that user",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Admin access required for performing this action on other user's accounts."}
+                }
+            }
+        }
     }
 )
 @limiter.limit("5/minute")
