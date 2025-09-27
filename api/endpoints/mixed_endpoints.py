@@ -34,7 +34,16 @@ user_db, _ = get_user_database()
             "description": "You don't have the rights to delete that user",
             "content": {
                 "application/json": {
-                    "example": {"detail": "Admin access required for performing this action on other user's accounts."}
+                    "examples": {
+                        "not_admin": {
+                            "summary": "Normal user deleting another account",
+                            "value": {"detail": "Admin access required for performing this action on other user's accounts."}
+                        },
+                        "self_delete_forbidden": {
+                            "summary": "User not allowed to delete own account (special case)",
+                            "value": {"detail": "You are not allowed to delete your own account."}
+                        }
+                    }
                 }
             }
         }
@@ -42,6 +51,9 @@ user_db, _ = get_user_database()
 )
 @limiter.limit("5/minute")
 def delete_user(request: Request, username: str, user_data = get_user_role("user")):
+    if username == "admin":
+        raise HTTPException(status_code=403, detail="The admin account cannot be deleted.")
+        
     if user_data["role"] == "admin":
         if user_db.delete_user(username) == True:
             return JSONResponse(content={

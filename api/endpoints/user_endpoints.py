@@ -29,14 +29,6 @@ router = APIRouter()
                     "example": {"detail": "Invalid API key"}
                 }
             }
-        },
-        403: {
-            "description": "Forbidden. Not enough rights",
-            "content": {
-                "application/json": {
-                    "example": {"detail": "Not enough rights"}
-                }
-            }
         }
     }
 )
