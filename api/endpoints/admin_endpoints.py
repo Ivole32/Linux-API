@@ -24,7 +24,7 @@ router = APIRouter()
             }
         },
         401: {
-            "description": "Unauthorized. Invalid API key",
+            "description": "Unauthorized. Invalid or missingAPI key",
             "content": {
                 "application/json": {
                     "example": {"detail": "Invalid or missing API key"}
@@ -64,7 +64,7 @@ def admin_area(request: Request, user_data = get_user_role("admin")):
             }
         },
         401: {
-            "description": "Unauthorized. Invalid API key",
+            "description": "Unauthorized. Invalid or missing API key",
             "content": {
                 "application/json": {
                     "example": {"detail": "Invalid or missing API key"}
@@ -114,7 +114,7 @@ def list_users(request: Request, user_data = get_user_role("admin")):
             }
         },
         401: {
-            "description": "Unauthorized. Invalid API key",
+            "description": "Unauthorized. Invalid or missing API key",
             "content": {
                 "application/json": {
                     "example": {"detail": "Invalid or missing API key"}

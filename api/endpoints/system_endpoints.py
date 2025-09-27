@@ -180,7 +180,7 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
         description="Returns the average load of the system over the last minutes.",
         responses={
             200: {"description": "Average load returned successfully"},
-            401: {"description": "Unauthorized. Invalid API key"},
+            401: {"description": "Unauthorized. Invalid or missing API key"},
             404: {"description": "User not found on the system."}
         }
 )
