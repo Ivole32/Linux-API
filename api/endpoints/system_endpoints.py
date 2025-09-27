@@ -56,7 +56,7 @@ def get_uptime(request: Request, user_data = get_user_role("user")):
                 "content": {
                     "application/json": {
                         "example": [
-                            {"pid": 1, "name": "systemd", "status": "running"},
+                            {"pid": 1, "name": "init", "status": "running"},
                             {"pid": 2, "name": "bash", "status": "sleeping"}
                         ]
                     }
