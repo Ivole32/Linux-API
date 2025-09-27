@@ -33,10 +33,10 @@ monitor.set_decimal_place_value(2)
                 }
             },
             401: {
-                "description": "Unauthorized. Invalid API key",
+                "description": "Unauthorized. Invalid or missing API key",
                 "content": {
                     "application/json": {
-                        "example": {"detail": "Invalid API key"}
+                        "example": {"detail": "Invalid or missing API key"}
                     }
                 }
             }
@@ -63,10 +63,10 @@ def get_uptime(request: Request, user_data = get_user_role("user")):
                 }
             },
             401: {
-                "description": "Unauthorized. Invalid API key",
+                "description": "Unauthorized. Invalid or missing API key",
                 "content": {
                     "application/json": {
-                        "example": {"detail": "Invalid API key"}
+                        "example": {"detail": "Invalid or missing API key"}
                     }
                 }
             }
@@ -87,19 +87,24 @@ def get_processes(request: Request, user_data = get_user_role("user")):
                 "content": {
                     "application/json": {
                         "example": {
-                            "cpu": "Intel(R) Xeon(R)",
-                            "memory": "8GB",
-                            "os": "Ubuntu 22.04",
-                            "hostname": "server01"
+                            "system": "Linux",
+                            "node_name": "hostname",
+                            "release": "system release",
+                            "version": "system version",
+                            "machine": "x86_64",
+                            "processor": "x86_64",
+                            "cpu_count": 1,
+                            "memory_total": 2062983168,
+                            "disk_total": 499963174912
                         }
                     }
                 }
             },
             401: {
-                "description": "Unauthorized. Invalid API key",
+                "description": "Unauthorized. Invalid or missing API key",
                 "content": {
                     "application/json": {
-                        "example": {"detail": "Invalid API key"}
+                        "example": {"detail": "Invalid or missing API key"}
                     }
                 }
             }
@@ -130,10 +135,10 @@ def system_infos(request: Request, user_data = get_user_role("user")):
             }
         },
         401: {
-            "description": "Unauthorized. Invalid API key",
+            "description": "Unauthorized. Invalid or missing API key",
             "content": {
                 "application/json": {
-                    "example": {"detail": "Invalid API key"}
+                    "example": {"detail": "Invalid or missing API key"}
                 }
             }
         },
