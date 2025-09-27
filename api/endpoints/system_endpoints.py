@@ -188,11 +188,11 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
                                 "summary": "Default values (2 decimal places, last 3 loads)",
                                 "value": {
                                     "system": {
-                                        "average_load": [0.15, 0.10, 0.05],
+                                        "average_load": 0.11,
                                         "last_loads": [0.20, 0.10, 0.05]
                                     },
                                     "cpu": {
-                                        "average_load": [0.10, 0.05, 0.02],
+                                        "average_load": 0.06,
                                         "last_loads": [0.12, 0.05, 0.02]
                                     }
                                 }
@@ -201,25 +201,25 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
                                 "summary": "Custom values (4 decimal places, last 5 loads)",
                                 "value": {
                                     "system": {
-                                        "average_load": [0.1534, 0.1023, 0.0543],
+                                        "average_load": 0.0875,
                                         "last_loads": [0.2034, 0.1023, 0.0543, 0.0456, 0.0321]
                                     },
                                     "cpu": {
-                                        "average_load": [0.1034, 0.0543, 0.0234],
+                                        "average_load": 0.0458,
                                         "last_loads": [0.1234, 0.0543, 0.0234, 0.0156, 0.0123]
                                     }
                                 }
                             },
                             "last_load_length_exceeds_max": {
-                                "summary": "Last load length exceeds the maximum, because there are not enough data points collected yet. For example last_load_length=10 but only 3 data points are available.",
+                                "summary": "Last load length exceeds the maximum (last loads set to 10 but only 5 available)",
                                 "value": {
                                     "system": {
-                                        "average_load": [0.1534, 0.1023, 0.0543],
-                                        "last_loads": [0.2034, 0.1023, 0.0543, 0.0456, 0.0321]
+                                        "average_load": 0.3012,
+                                        "last_loads": [0.1787, 0.1309, 0.3364, 0.2241, 0.1128]
                                     },
                                     "cpu": {
-                                        "average_load": [0.1034, 0.0543, 0.0234],
-                                        "last_loads": [0.1234, 0.0543, 0.0234, 0.0156, 0.0123]
+                                        "average_load": 0.2654,
+                                        "last_loads": [0.263, 0.25, 0.253, 0.25, 0.25]
                                     }
                                 }
                             }
