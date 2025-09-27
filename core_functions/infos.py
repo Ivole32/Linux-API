@@ -29,9 +29,9 @@ def list_processes():
     for proc in psutil.process_iter(['status', 'pid', 'name']):
         info = proc.info
         processes.append({
+            "pid": info.get("pid"),
             "name": info.get("name"),
-            "status": info.get("status"),
-            "pid": info.get("pid")
+            "status": info.get("status")
         })
     return processes
 
