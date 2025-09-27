@@ -179,9 +179,62 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
         tags=["System"],
         description="Returns the average load of the system over the last minutes.",
         responses={
-            200: {"description": "Average load returned successfully"},
-            401: {"description": "Unauthorized. Invalid or missing API key"},
-            404: {"description": "User not found on the system."}
+            200: {
+                "description": "Average load returned successfully",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "default_values": {
+                                "summary": "Default values (2 decimal places, last 3 loads)",
+                                "value": {
+                                    "system": {
+                                        "average_load": [0.15, 0.10, 0.05],
+                                        "last_loads": [0.20, 0.10, 0.05]
+                                    },
+                                    "cpu": {
+                                        "average_load": [0.10, 0.05, 0.02],
+                                        "last_loads": [0.12, 0.05, 0.02]
+                                    }
+                                }
+                            },
+                            "custom_values": {
+                                "summary": "Custom values (4 decimal places, last 5 loads)",
+                                "value": {
+                                    "system": {
+                                        "average_load": [0.1534, 0.1023, 0.0543],
+                                        "last_loads": [0.2034, 0.1023, 0.0543, 0.0456, 0.0321]
+                                    },
+                                    "cpu": {
+                                        "average_load": [0.1034, 0.0543, 0.0234],
+                                        "last_loads": [0.1234, 0.0543, 0.0234, 0.0156, 0.0123]
+                                    }
+                                }
+                            },
+                            "last_load_length_exceeds_max": {
+                                "summary": "Last load length exceeds the maximum, because there are not enough data points collected yet. For example last_load_length=10 but only 3 data points are available.",
+                                "value": {
+                                    "system": {
+                                        "average_load": [0.1534, 0.1023, 0.0543],
+                                        "last_loads": [0.2034, 0.1023, 0.0543, 0.0456, 0.0321]
+                                    },
+                                    "cpu": {
+                                        "average_load": [0.1034, 0.0543, 0.0234],
+                                        "last_loads": [0.1234, 0.0543, 0.0234, 0.0156, 0.0123]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            401: {
+                "description": "Unauthorized. Invalid or missing API key",
+                "content": {
+                    "application/json": {
+                        "example": {"detail": "Invalid or missing API key"}
+                    }
+                }
+            }
         }
 )
 @limiter.limit("5/minute")
