@@ -22,11 +22,19 @@ user_db, _ = get_user_database()
                 }
             }
         },
-        401: {
-            "description": "Unauthorized. Invalid API key",
+        400: {
+            "description": "Unauthorized. Invalid or missing API key",
             "content": {
                 "application/json": {
-                    "example": {"detail": "Invalid API key"}
+                    "example": {"detail": "User deletion failed or user does not exist"}
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized. Invalid or missing API key",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Invalid or missing API key"}
                 }
             }
         },
@@ -59,12 +67,16 @@ def delete_user(request: Request, username: str, user_data = get_user_role("user
             return JSONResponse(content={
                 "status": "success"
             })
+        else:
+            raise HTTPException(status_code=400, detail="User deletion failed or user does not exist")
 
     elif user_data["username"] == username:
         if user_db.delete_user(username) == True:
             return JSONResponse(content={
                 "status": "success"
             })
+        else:
+            raise HTTPException(status_code=400, detail="User deletion failed or user does not exist")
 
     else:
         raise HTTPException(status_code=403, detail="Admin access required for performing this action on other user's accounts.")
