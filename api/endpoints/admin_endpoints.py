@@ -56,8 +56,8 @@ def admin_area(request: Request, user_data = get_user_role("admin")):
                 "application/json": {
                     "example": {
                         "users": [
-                            {"username": "adminuser", "role": "admin"},
-                            {"username": "testuser", "role": "user"}
+                            {"username": "admin", "role": "admin", "created_at": "2023-10-01T12:00:00Z", "last_login": "2023-10-01T12:00:00Z", "is_active": "true"},
+                            {"username": "testuser", "role": "user", "created_at": "2023-10-01T12:00:00Z", "last_login": "2023-10-01T12:00:00Z", "is_active": "true"}
                         ]
                     }
                 }
