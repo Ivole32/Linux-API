@@ -39,9 +39,9 @@ user_db, _ = get_user_database()
                             "summary": "Normal user deleting another account",
                             "value": {"detail": "Admin access required for performing this action on other user's accounts."}
                         },
-                        "self_delete_forbidden": {
-                            "summary": "User not allowed to delete own account (special case)",
-                            "value": {"detail": "You are not allowed to delete your own account."}
+                        "admin_account_deletion_forbidden": {
+                            "summary": "The admin account cannot be deleted",
+                            "value": {"detail": "The admin account cannot be deleted."}
                         }
                     }
                 }

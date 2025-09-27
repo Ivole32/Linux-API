@@ -23,10 +23,10 @@ router = APIRouter()
             }
         },
         401: {
-            "description": "Unauthorized. Invalid API key",
+            "description": "Unauthorized. Invalid or missing API key",
             "content": {
                 "application/json": {
-                    "example": {"detail": "Invalid API key"}
+                    "example": {"detail": "Invalid or missing API key"}
                 }
             }
         }

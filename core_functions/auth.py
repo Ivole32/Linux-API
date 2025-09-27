@@ -7,7 +7,7 @@ def verify_api_key(x_api_key: str = Header(demo_api_key), required_role: str = "
     result = user_db.verify_api_key(x_api_key)
     
     if result is None:
-        raise HTTPException(status_code=401, detail="Invalid API key")
+        raise HTTPException(status_code=401, detail="Invalid or missing API key")
     
     username, user_role = result
     
