@@ -27,7 +27,12 @@ def get_system_infos():
 def list_processes():
     processes = []
     for proc in psutil.process_iter(['status', 'pid', 'name']):
-        processes.append(proc.info)
+        info = proc.info
+        processes.append({
+            "name": info.get("name"),
+            "status": info.get("status"),
+            "pid": info.get("pid")
+        })
     return processes
 
 def get_system_uptime():
