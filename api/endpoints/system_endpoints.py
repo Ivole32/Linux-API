@@ -149,14 +149,6 @@ def system_infos(request: Request, user_data = get_user_role("user")):
                     "example": {"detail": "User not found on the system"}
                 }
             }
-        },
-        500: {
-            "description": "Internal server error.",
-            "content": {
-                "application/json": {
-                    "example": {"detail": "500 Internal server error"}
-                }
-            }
         }
     }
 )
@@ -169,10 +161,6 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
     
     elif return_code == None:
         raise HTTPException(status_code=404, detail="User not found on the system")
-    
-    else:
-        raise HTTPException(status_code=500, detail="500 Internal server error")
-    
 
 @router.get(
         "/system/avg-load",

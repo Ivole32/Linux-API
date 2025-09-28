@@ -1,5 +1,7 @@
+import logging
 from fastapi import FastAPI, Request
 from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
 from slowapi.middleware import SlowAPIMiddleware
 
 from api.endpoints.admin_endpoints import router as admin_router
@@ -9,6 +11,8 @@ from api.endpoints.unauthenticated_endpoints import router as unauthenticated_ro
 from api.endpoints.mixed_endpoints import router as mixed_router
 
 from core_functions.limiter import limiter
+
+logger = logging.getLogger("uvicorn.error")
 
 app = FastAPI(
     title="Linux-API Server",
@@ -50,6 +54,14 @@ def custom_openapi():
     return app.openapi_schema
 
 app.openapi = custom_openapi
+
+@app.exception_handler(Exception)
+async def internal_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "500 Internal server error"},
+    )
 
 app.include_router(unauthenticated_router)
 app.include_router(user_router)
