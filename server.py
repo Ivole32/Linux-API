@@ -1,4 +1,6 @@
 import logging
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
@@ -12,7 +14,12 @@ from api.endpoints.mixed_endpoints import router as mixed_router
 
 from core_functions.limiter import limiter
 
+
 logger = logging.getLogger("uvicorn.error")
+
+load_dotenv(dotenv_path="config.env")
+
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 
 app = FastAPI(
     title="Linux-API Server",
@@ -20,10 +27,12 @@ app = FastAPI(
     swagger_ui_parameters={
         "docExpansion": "list",
         "defaultModelsExpandDepth": -1,
-        "displayRequestDuration": True,
+        "displayRequestDuration": DEMO_MODE,
         "filter": True,
         "syntaxHighlight.theme": "monokai",
     },
+    docs_url="/docs",
+    redoc_url=None
 )
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)

@@ -18,7 +18,7 @@ router = APIRouter()
             "content": {
                 "application/json": {
                     "example": {
-                        "message": "Admin access granted for adminuser with role admin!"
+                        "message": "Admin access granted for admin with role admin!"
                     }
                 }
             }
