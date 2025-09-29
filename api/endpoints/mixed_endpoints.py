@@ -23,7 +23,7 @@ user_db, _ = get_user_database()
             }
         },
         400: {
-            "description": "Unauthorized. Invalid or missing API key",
+            "description": "User deletion failed or user does not exist",
             "content": {
                 "application/json": {
                     "example": {"detail": "User deletion failed or user does not exist"}
