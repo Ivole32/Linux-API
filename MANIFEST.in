@@ -1,0 +1,8 @@
+include README.md
+include requirements.txt
+include start.sh
+include start_debug.sh
+include config.env
+recursive-include api *
+recursive-include core_functions *
+

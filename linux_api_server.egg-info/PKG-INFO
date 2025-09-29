@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: linux-api-server
+Version: 0.1.0
+Requires-Dist: fastapi==0.118.0
+Requires-Dist: uvicorn==0.37.0
+Requires-Dist: slowapi==0.1.9
+Requires-Dist: pydantic==2.11.9
+Requires-Dist: bcrypt==5.0.0
+Requires-Dist: psutil==7.1.0
+Requires-Dist: python-dotenv==1.1.1
+Dynamic: requires-dist
