@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: linux-api
+Version: 1.2.6
+Summary: A linux API server to get system informations and other live informations about your linux machine.
+Author-email: Ivole32 <ivo.theis@posteo.de>
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi==0.118.0
+Requires-Dist: uvicorn==0.37.0
+Requires-Dist: slowapi==0.1.9
+Requires-Dist: pydantic==2.11.9
+Requires-Dist: bcrypt==5.0.0
+Requires-Dist: psutil==7.1.0
+Requires-Dist: python-dotenv==1.1.1
+
+# Linux-API
+A linux API server to get system informations and other live informations about your linux machine.
