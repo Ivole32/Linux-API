@@ -1,6 +1,3 @@
 __pycache__/
 *.db
 venv
-.venv
-*.egg-info
-build/*
