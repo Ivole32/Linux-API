@@ -1,6 +1,8 @@
 #!/bin/bash
 
-sleep 5
+cd "$(dirname "$(readlink -f "$0")")" || exit 1
+
+sleep 3
 
 echo "DEMO_MODE = True" > config.env
 
