@@ -1,6 +1,6 @@
 [project]
 name = "linux-api"
-version = "1.3.0"
+version = "2.0.0"
 description = "A linux API server to get system informations and other live informations about your linux machine."
 authors = [{ name = "Ivole32", email = "ivo.theis@posteo.de" }]
 readme = "README.md"

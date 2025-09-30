@@ -8,6 +8,8 @@ Linux-API is a modern, secure REST API server for Linux system monitoring and ma
   - [pip Installation](https://github.com/Ivole32/Linux-API/wiki/pip-Hosting)
   - [systemd Service](https://github.com/Ivole32/Linux-API/wiki/Systemd-Hosting)
 
+  - [pip-package](https://pypi.org/project/linux-api/)
+
 ## Features
 - [See all features](https://github.com/Ivole32/Linux-API/wiki/Features)
 
