@@ -35,7 +35,8 @@ source venv/bin/activate
      ./linux_api/start_debug.sh
      ```
 3. **Access the API docs:**
-   Open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser.
+  Open [http://localhost/docs](http://localhost/docs) in your browser.
+Open docs: Open [http://67.207.74.82/docs](http://67.207.74.82/docs) in your browser.
 
 
 ## Notes
