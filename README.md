@@ -45,7 +45,7 @@ Comprehensive guides for different deployment scenarios:
 
 ## 🌐 Demo & API Docs
 
-- **Live Demo:** [http://67.207.74.82/docs](http://67.207.74.82/docs)
+- **Live Demo:** Currently down
 - **Interactive API Documentation:** Available at `/docs` endpoint when running
 
 ## 🛠️ Requirements
