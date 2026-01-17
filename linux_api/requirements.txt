@@ -6,3 +6,6 @@ pydantic>=2.12.5
 bcrypt>=5.0.0
 psutil>=7.2.1
 python-dotenv>=1.2.1
+
+# Pinned by snyk to fix https://security.snyk.io/vuln/SNYK-PYTHON-ZIPP-7430899
+zipp==3.19.1
