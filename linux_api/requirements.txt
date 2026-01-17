@@ -1,8 +1,8 @@
 #Requirements
-fastapi==0.118.0
-uvicorn==0.37.0
-slowapi==0.1.9
-pydantic==2.11.9
-bcrypt==5.0.0
-psutil==7.1.0
-python-dotenv==1.1.1
+fastapi>=0.128.0
+uvicorn>=0.40.0
+slowapi>=0.1.9
+pydantic>=2.12.5
+bcrypt>=5.0.0
+psutil>=7.2.1
+python-dotenv>=1.2.1
