@@ -16,13 +16,16 @@ load_dotenv(ROOT_DIR / ".env") # Load .env file
 # Secrets
 API_KEY_SECRET = os.getenv("API_KEY_SECRET", None) # Use None if not set in .env to raise error later
 
-
 # API configuration
 API_TITLE = "Linux API" # Short title for the API
 API_DESCRIPTION = "A linux API server to get system informations and other live informations about your linux machine.." # Description of the API
 API_VERSION = "dev" # Version of the API
 API_PREFIX = f"/api/{API_VERSION}" # Prefix for all API endpoints
 API_DOCS_ENABLED = True # Enable or disable API documentation
+
+# Rate limiting configuration
+API_RATE_LIMIT_ENABLED = False # Enable or disable rate limiting
+API_DEFAULT_RATE_LIMITS = ["100/minute"] # Default rate limits
 
 # PostgreSQL configuration
 # (Floats must stay as floats)
@@ -40,6 +43,6 @@ POSTGRES_HEALTHCHECK_TIMEOUT = 15.0 # Timeout for PostgreSQL health checks (in s
 
 # CORS configuration
 CORS_ALLOWED_ORIGINS = ["*"] # Allow all origins for now, can be adjusted later
-CORS_ALLOWED_METHODS = ["GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"] # Only allow specific methods, can be adjusted later
+CORS_ALLOWED_METHODS = ["GET", "POST", "DELETE", "OPTIONS"] # Only allow specific methods, can be adjusted later
 CORS_ALLOWED_HEADERS = ["*"] # Allow all headers
 CORS_MAX_AGE = 600 # Cache preflight (OPTIONS) requests for 10 minutes

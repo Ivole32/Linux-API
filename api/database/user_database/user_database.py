@@ -2,16 +2,12 @@
 The main module for managing user database operations.
 """
 
-# Import password hashing library
-from argon2 import PasswordHasher, Type
-
 # Import psycopg errors
 import psycopg.errors
 
 # Import regular expressions and other utilities
 import re
 import secrets
-import string
 import hashlib
 import hmac
 
