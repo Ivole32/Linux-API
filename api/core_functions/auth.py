@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends, Header
-from core_functions.user_database import get_user_database, UserRole
+from api.core_functions.user_database import get_user_database, UserRole
 
 user_db, demo_api_key = get_user_database()
 

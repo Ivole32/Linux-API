@@ -12,7 +12,7 @@ from api.endpoints.system_endpoints import router as system_router
 from api.endpoints.unauthenticated_endpoints import router as unauthenticated_router
 from api.endpoints.mixed_endpoints import router as mixed_router
 
-from core_functions.limiter import limiter
+from api.core_functions.limiter import limiter
 
 
 logger = logging.getLogger("uvicorn.error")
