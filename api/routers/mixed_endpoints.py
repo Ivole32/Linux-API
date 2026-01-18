@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, HTTPException
 
 from api.core_functions.limiter import limiter
 from api.core_functions.auth import get_user_role
-from api.core_functions.user_database import get_user_database
+from api.database.user_database.user_database_old import get_user_database
 
 router = APIRouter(prefix="/users")
 

@@ -15,6 +15,14 @@ from api.routers.mixed_endpoints import router as mixed_router
 from api.core_functions.limiter import limiter
 
 
+# Import header middleware
+from api.middleware.headers import add_header_middleware
+
+# Import CORS middleware
+from api.middleware.cors import setup_cors
+
+from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, API_DOCS_ENABLED
+
 logger = logging.getLogger("uvicorn.error")
 
 load_dotenv(dotenv_path="config.env")
@@ -22,8 +30,9 @@ load_dotenv(dotenv_path="config.env")
 DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 
 app = FastAPI(
-    title="Linux-API Server",
-    version="dev",
+    title=API_TITLE,
+    description=API_DESCRIPTION,
+    version=API_VERSION,
     swagger_ui_parameters={
         "docExpansion": "list",
         "defaultModelsExpandDepth": -1,
@@ -31,24 +40,12 @@ app = FastAPI(
         "filter": True,
         "syntaxHighlight.theme": "monokai",
     },
-    docs_url="/docs",
-    redoc_url=None
+    docs_url="/docs" if API_DOCS_ENABLED else None,
+    redoc_url=None,
+    openapi_url="/openapi.json" if API_DOCS_ENABLED else None
 )
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
-
-@app.middleware("http")
-async def add_security_headers(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Cache-Control"] = "no-store"
-    response.headers["Expires"] = "0"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Referrer-Policy"] = "no-referrer"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-XSS-Protection"] = "1; mode=block"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-    return response
 
 def custom_openapi():
     if app.openapi_schema:
@@ -72,8 +69,23 @@ async def internal_exception_handler(request: Request, exc: Exception):
         content={"detail": "500 Internal server error"},
     )
 
-app.include_router(unauthenticated_router, prefix="/api/v1")
-app.include_router(user_router, prefix="/api/v1")
-app.include_router(admin_router, prefix="/api/v1")
-app.include_router(system_router, prefix="/api/v1")
-app.include_router(mixed_router, prefix="/api/v1")
+# Include routers
+app.include_router(unauthenticated_router, prefix=API_PREFIX)
+app.include_router(user_router, prefix=API_PREFIX)
+app.include_router(admin_router, prefix=API_PREFIX)
+app.include_router(system_router, prefix=API_PREFIX)
+app.include_router(mixed_router, prefix=API_PREFIX)
+
+# Add custom headers middleware
+add_header_middleware(app)
+
+# Setup CORS middleware
+setup_cors(app)
+
+@app.get("/", include_in_schema=False)
+@limiter.limit("10/second")
+async def root(request: Request):
+    if API_DOCS_ENABLED:
+        return {"message": "API is running. See /docs for documentation.", "version": API_VERSION,"docs": "/docs"}
+    else:
+        return {"message": "API i running", "version": API_VERSION}
