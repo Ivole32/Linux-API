@@ -5,15 +5,14 @@ from api.core_functions.auth import get_user_role
 from api.core_functions.load_monitor import LoadMonitor
 from api.core_functions.infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
 
-router = APIRouter()
+router = APIRouter(prefix="/system", tags=["System"])
 
 monitor = LoadMonitor()
 monitor.start()
 monitor.set_decimal_place_value(2)
 
 @router.get(
-        "/system/uptime",
-        tags=["System"],
+        "/uptime",
         description="This endpoint returns the system uptime in days, hours, minutes, and seconds + full seconds.",
         responses={
             200: {
@@ -47,8 +46,7 @@ def get_uptime(request: Request, user_data = get_user_role("user")):
     return get_system_uptime()
 
 @router.get(
-        "/system/processes",
-        tags=["System"],
+        "/processes",
         description="Returns a list of all running processes on the server with their PID, name, and status.",
         responses={
             200: {
@@ -78,8 +76,7 @@ def get_processes(request: Request, user_data = get_user_role("user")):
     return processes
 
 @router.get(
-        "/system/system-infos",
-        tags=["System"],
+        "/system-infos",
         description="This endpoint returns the system information of the server.",
         responses={
             200: {
@@ -116,8 +113,7 @@ def system_infos(request: Request, user_data = get_user_role("user")):
     return system_info
 
 @router.get(
-    "/system/system-user",
-    tags=["System"],
+    "/system-user",
     description="Returns informations about a specific user account on the server like UID, GID, shell and home dir.",
     responses={
         200: {
@@ -163,8 +159,7 @@ def system_user_infos(request: Request, username: str, user_data = get_user_role
         raise HTTPException(status_code=404, detail="User not found on the system")
 
 @router.get(
-        "/system/avg-load",
-        tags=["System"],
+        "/avg-load",
         description="Returns the average load of the system over the last minutes.",
         responses={
             200: {

@@ -6,11 +6,10 @@ from api.core_functions.user_database import get_user_database, UserRole
 
 user_db, _ = get_user_database()
 
-router = APIRouter()
+router = APIRouter(prefix="/admin", tags=["Admin"])
 
 @router.get(
-    "/admin/admin-area",
-    tags=["Admin"],
+    "/admin-area",
     description="A testing endpoint.",
     responses={
         200: {
@@ -46,8 +45,7 @@ def admin_area(request: Request, user_data = get_user_role("admin")):
     return {"message": f"Admin access granted for {user_data['username']} with role {user_data['role']}!"}
 
 @router.get(
-    "/admin/users",
-    tags=["Admin"],
+    "/users",
     description="Returns a list of all users with their account information.",
     responses={
         200: {
@@ -87,8 +85,7 @@ def list_users(request: Request, user_data = get_user_role("admin")):
     return {"users": users}
 
 @router.post(
-    "/admin/user/create",
-    tags=["Admin"],
+    "/user/create",
     description="Creates a new user with the specified username, role, and optional API key.",
     responses={
         200: {

@@ -5,12 +5,12 @@ from api.core_functions.limiter import limiter
 from api.core_functions.auth import get_user_role
 from api.core_functions.user_database import get_user_database
 
-router = APIRouter()
+router = APIRouter(prefix="/users")
 
 user_db, _ = get_user_database()
 
 @router.delete(
-    "/user/delete",
+    "/delete",
     tags=["Admin", "User"],
     description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account.",
     responses={

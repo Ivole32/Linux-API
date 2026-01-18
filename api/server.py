@@ -6,11 +6,11 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from slowapi.middleware import SlowAPIMiddleware
 
-from api.endpoints.admin_endpoints import router as admin_router
-from api.endpoints.user_endpoints import router as user_router
-from api.endpoints.system_endpoints import router as system_router
-from api.endpoints.unauthenticated_endpoints import router as unauthenticated_router
-from api.endpoints.mixed_endpoints import router as mixed_router
+from api.routers.admin_endpoints import router as admin_router
+from api.routers.user_endpoints import router as user_router
+from api.routers.system_endpoints import router as system_router
+from api.routers.unauthenticated_endpoints import router as unauthenticated_router
+from api.routers.mixed_endpoints import router as mixed_router
 
 from api.core_functions.limiter import limiter
 
@@ -23,7 +23,7 @@ DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 
 app = FastAPI(
     title="Linux-API Server",
-    version="1.0.0",
+    version="dev",
     swagger_ui_parameters={
         "docExpansion": "list",
         "defaultModelsExpandDepth": -1,
@@ -72,8 +72,8 @@ async def internal_exception_handler(request: Request, exc: Exception):
         content={"detail": "500 Internal server error"},
     )
 
-app.include_router(unauthenticated_router)
-app.include_router(user_router)
-app.include_router(admin_router)
-app.include_router(system_router)
-app.include_router(mixed_router)
+app.include_router(unauthenticated_router, prefix="/api/v1")
+app.include_router(user_router, prefix="/api/v1")
+app.include_router(admin_router, prefix="/api/v1")
+app.include_router(system_router, prefix="/api/v1")
+app.include_router(mixed_router, prefix="/api/v1")
