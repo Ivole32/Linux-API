@@ -16,6 +16,9 @@ load_dotenv(ROOT_DIR / ".env") # Load .env file
 # Secrets
 API_KEY_SECRET = os.getenv("API_KEY_SECRET", None) # Use None if not set in .env to raise error later
 
+# Demo Mode
+DEMO_MODE = True
+
 # API configuration
 API_TITLE = "Linux API" # Short title for the API
 API_DESCRIPTION = "A linux API server to get system informations and other live informations about your linux machine.." # Description of the API

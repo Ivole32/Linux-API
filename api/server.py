@@ -12,7 +12,7 @@ from api.routers.system_endpoints import router as system_router
 from api.routers.unauthenticated_endpoints import router as unauthenticated_router
 from api.routers.mixed_endpoints import router as mixed_router
 
-from api.core_functions.limiter import limiter
+from api.limiter.limiter import limiter
 
 
 # Import header middleware
@@ -21,13 +21,11 @@ from api.middleware.headers import add_header_middleware
 # Import CORS middleware
 from api.middleware.cors import setup_cors
 
-from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, API_DOCS_ENABLED
+from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, API_DOCS_ENABLED, DEMO_MODE
 
 logger = logging.getLogger("uvicorn.error")
 
 load_dotenv(dotenv_path="config.env")
-
-DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 
 app = FastAPI(
     title=API_TITLE,
@@ -41,9 +39,10 @@ app = FastAPI(
         "syntaxHighlight.theme": "monokai",
     },
     docs_url="/docs" if API_DOCS_ENABLED else None,
-    redoc_url=None,
-    openapi_url="/openapi.json" if API_DOCS_ENABLED else None
+    openapi_url="/openapi.json" if API_DOCS_ENABLED else None,
+    redoc_url=None # I don't like redocs so enable if you want to...
 )
+
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
@@ -86,6 +85,6 @@ setup_cors(app)
 @limiter.limit("10/second")
 async def root(request: Request):
     if API_DOCS_ENABLED:
-        return {"message": "API is running. See /docs for documentation.", "version": API_VERSION,"docs": "/docs"}
+        return {"message": "API is running. See /docs for documentation.", "version": API_VERSION, "docs": "/docs"}
     else:
         return {"message": "API i running", "version": API_VERSION}
