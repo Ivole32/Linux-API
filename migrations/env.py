@@ -33,7 +33,7 @@ config.set_main_option("sqlalchemy.url", database_url)
 # Import SQLAlchemy metadata for autogenerate
 # -------------------------------------------------
 from api.database.models.base import Base
-from api.database.models.user import User, UserAuth, UserPerm
+from api.database.models import *
 target_metadata = Base.metadata
 
 
@@ -44,6 +44,9 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_schemas=True,
+        compare_type=True,
+        compare_server_default=True
     )
 
     with context.begin_transaction():
@@ -62,6 +65,9 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
+            include_schemas=True,
+            compare_type=True,
+            compare_server_default=True
         )
 
         with context.begin_transaction():

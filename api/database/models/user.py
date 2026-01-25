@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime, func, Boolean, ForeignKey
+from sqlalchemy import Column, String, DateTime, func, Boolean, ForeignKey, text
 from sqlalchemy.dialects.postgresql import UUID
 from .base import Base
 
@@ -33,5 +33,5 @@ class UserPerm(Base):
         primary_key=True,
         nullable=False
     )
-    is_admin = Column(Boolean, default=False)
-    activated = Column(Boolean, default=False)
+    is_admin = Column(Boolean, server_default=text("false"))
+    activated = Column(Boolean, server_default=text("false"))
