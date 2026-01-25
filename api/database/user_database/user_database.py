@@ -69,7 +69,7 @@ class UserDatabase:
                 cur.execute(
                     f"""
                     CREATE TABLE IF NOT EXISTS {self.schema}.user_auth (
-                        user_id PRIMARY KEY NOT NULL,
+                        user_id UUID PRIMARY KEY NOT NULL,
                         api_key_hash TEXT NOT NULL,
                         FOREIGN KEY (user_id) REFERENCES {self.schema}.users(user_id) ON DELETE CASCADE
                     );
@@ -80,7 +80,7 @@ class UserDatabase:
                 cur.execute(
                     f"""
                     CREATE TABLE IF NOT EXISTS {self.schema}.user_perm (
-                        user_id PRIMARY KEY NOT NULL,
+                        user_id UUID PRIMARY KEY NOT NULL,
                         is_admin BOOL DEFAULT false,
                         activated BOOL DEFAUL false,
                         FOREIGN KEY (user_id) REFERENCES {self.schema}.users(user_id) ON DELETE CASCADE
@@ -202,7 +202,7 @@ class UserDatabase:
                     conn.rollback()
                     return False
 
-    def create_user(self, username: str, is_admin: bool, activate: bool):
+    def create_user(self, username: str, is_admin: bool, activate: bool) -> tuple:
         sanitized_username = self._sanitize_username(username=username)
 
         user_id = self._create_user_record(username=sanitized_username)
@@ -218,6 +218,9 @@ class UserDatabase:
             return
 
         return sanitized_username, user_id, api_key
+
+    def delete_user(self, user_id: str) -> bool:
+        pass
 
     def is_ready(self) -> bool:
         """
