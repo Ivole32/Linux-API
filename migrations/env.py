@@ -17,9 +17,14 @@ load_dotenv()
 # -------------------------------------------------
 config = context.config
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="[%(name)s] %(levelname)s: %(message)s",
+)
+
 # Configure logging
-alembic_logger = logging.getLogger("alembic")
-alembic_logger.setLevel(logging.INFO)
+alembic_logger = logging.getLogger("uvicorn.logger")
+alembic_logger.setLevel(logging.DEBUG)
 
 if not alembic_logger.handlers:
     handler = logging.StreamHandler()
