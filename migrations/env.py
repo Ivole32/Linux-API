@@ -1,6 +1,8 @@
 from logging.config import fileConfig
 import os
 
+import logging
+
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 from dotenv import load_dotenv
@@ -16,8 +18,17 @@ load_dotenv()
 config = context.config
 
 # Configure logging
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+alembic_logger = logging.getLogger("alembic")
+alembic_logger.setLevel(logging.INFO)
+
+if not alembic_logger.handlers:
+    handler = logging.StreamHandler()
+    handler.setFormatter(
+        logging.Formatter("[alembic] %(levelname)s: %(message)s")
+    )
+    alembic_logger.addHandler(handler)
+
+alembic_logger.propagate = False
 
 # -------------------------------------------------
 # Load DATABASE_URL from .env (PostgreSQL)
