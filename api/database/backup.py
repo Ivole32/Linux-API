@@ -42,6 +42,14 @@ def backup_database(database_url: str):
     )
 
     if result.returncode != 0:
+        stderr = result.stderr.lower()
+        if "server version mismatch" in stderr:
+            raise RuntimeError(
+                "PostgreSQL version mismatch:\n"
+                "pg_dump version is older than the server.\n"
+                "Install pg_dump >= server version."
+            )
+
         raise RuntimeError(
             f"Backup failed:\n{result.stderr}"
         )
