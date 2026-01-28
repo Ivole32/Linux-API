@@ -35,3 +35,12 @@ class UserPerm(Base):
     )
     is_admin = Column(Boolean, server_default=text("false"))
     activated = Column(Boolean, server_default=text("false"))
+
+class TestTable(Base):
+    __tablename__ = "test_table"
+    __table_args__ = {"schema": SCHEMA}
+    user_id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        nullable=False
+    )
