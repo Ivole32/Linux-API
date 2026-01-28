@@ -49,3 +49,13 @@ CORS_ALLOWED_ORIGINS = ["*"] # Allow all origins for now, can be adjusted later
 CORS_ALLOWED_METHODS = ["GET", "POST", "DELETE", "OPTIONS"] # Only allow specific methods, can be adjusted later
 CORS_ALLOWED_HEADERS = ["*"] # Allow all headers
 CORS_MAX_AGE = 600 # Cache preflight (OPTIONS) requests for 10 minutes
+
+# User Settings
+USER_SOFT_DELETE = True # If deleted users should stay in the database (-> invisible) if they are removed to make recovery easyer
+
+# Database migration
+BACKUP_DATABASE_BEFORE_MIGRATION = True # Recommended because migrations can break much stuff
+BACKUP_DATABASE_AT_STARTUP = False # True if a backup is needed after every server start
+DATABASE_BACKUP_DIR = r"C:\Users\<not_for_you>\Documents\GitHub\Linux-API\backup"
+AUTO_MIGRATE_DATABASE_ON_STARTUP = True
+ALEMBIC_INI_FILE = r"C:\Users\<not_for_you>\Documents\GitHub\Linux-API\alembic.ini"

@@ -1,5 +1,4 @@
 import logging
-import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.openapi.utils import get_openapi
@@ -14,6 +13,8 @@ from api.routers.mixed_endpoints import router as mixed_router
 
 from api.limiter.limiter import limiter
 
+# Import database startup functions
+from api.database.startup import startup_database
 
 # Import header middleware
 from api.middleware.headers import add_header_middleware
@@ -40,7 +41,8 @@ app = FastAPI(
     },
     docs_url="/docs" if API_DOCS_ENABLED else None,
     openapi_url="/openapi.json" if API_DOCS_ENABLED else None,
-    redoc_url=None # I don't like redocs so enable if you want to...
+    redoc_url=None, # I don't like redocs so enable if you want to...
+    on_startup=[startup_database]
 )
 
 app.state.limiter = limiter

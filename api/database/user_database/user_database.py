@@ -11,6 +11,13 @@ import secrets
 import hashlib
 import hmac
 
+# Import alembic stuff
+from alembic.config import Config
+from alembic import command
+import os
+import subprocess
+from datetime import datetime
+
 # Import configuration constants
 from api.config.config import API_KEY_SECRET
 
@@ -27,67 +34,57 @@ class UserDatabase:
         self._ready = False
         self.schema = "users"
 
-    def init_db(self, schema: str = "users") -> bool:
-        try:
-            self.schema = schema
-            with postgres_pool.get_connection() as conn:
-                with conn.cursor() as cur:
-                    cur.execute(f"CREATE SCHEMA IF NOT EXISTS {self.schema};")
-                    conn.commit()
-            self._create_tables()
+        from dotenv import load_dotenv
+        load_dotenv() # Load .env
 
-            self._ready = True
+        self.database_url = os.getenv("DATABASE_URL")
 
-            return True
-
-        except psycopg.Error as e:
-            from api.logger.logger import logger
-            logger.error(f"Database error: {e}")
-            return False
-        except Exception as e:
-            from api.logger.logger import logger
-            logger.error(f"Unexpected error: {e}")
-            return False
+    def _run_alembic_upgrade_head(self, alembic_ini_path: str = "../alembic.ini"):
+        """
+        Apply all pending Alembic migrations (upgrade to head)
+        """
+        if not os.path.exists(alembic_ini_path):
+            raise FileNotFoundError(f"{alembic_ini_path} not found")
         
-    def _create_tables(self) -> None:
-        """Create necessary tables in the user database."""
-        with postgres_pool.get_connection() as conn:
-            with conn.cursor() as cur:
-                # Create user table
-                cur.execute(
-                    f"""
-                    CREATE TABLE IF NOT EXISTS {self.schema}.users (
-                        user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                        username TEXT NOT NULL UNIQUE,
-                        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                        last_login TIMESTAMPTZ
-                    );
-                    """
-                )
+        alembic_cfg = Config(alembic_ini_path)
 
-                # Create user_auth table
-                cur.execute(
-                    f"""
-                    CREATE TABLE IF NOT EXISTS {self.schema}.user_auth (
-                        user_id UUID PRIMARY KEY NOT NULL,
-                        api_key_hash TEXT NOT NULL,
-                        FOREIGN KEY (user_id) REFERENCES {self.schema}.users(user_id) ON DELETE CASCADE
-                    );
-                    """
-                )
+        if self.database_url:
+            alembic_cfg.set_main_option("sqlalchemy.url", self.database_url)
 
-                # Create user_perm table
-                cur.execute(
-                    f"""
-                    CREATE TABLE IF NOT EXISTS {self.schema}.user_perm (
-                        user_id UUID PRIMARY KEY NOT NULL,
-                        is_admin BOOL DEFAULT false,
-                        activated BOOL DEFAUL false,
-                        FOREIGN KEY (user_id) REFERENCES {self.schema}.users(user_id) ON DELETE CASCADE
-                    );
-                    """
-                )
-                conn.commit()
+        # Run upgrade
+        command.upgrade(alembic_cfg, "head")
+
+    def _dump_database(self, database_url: str, backup_dir: str = "./backups"):
+        """
+        Create a backup of the PostgreSQL database using pg_dump.
+        """
+        os.makedirs(backup_dir, exist_ok=True)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_file = os.path.join(backup_dir, f"backup_{timestamp}.sql")
+
+        # pg_dump expects: postgres://user:password@host:port/db
+        database_url = "postgres" + database_url.split("//", 1)[1]
+
+        result = subprocess.run(
+            ["pg_dump", database_url, "-f", backup_file],
+            capture_output=True,
+            text=True
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError(f"Backup failed: {result.stderr}")
+        
+        print(f"Backup successful: {backup_file}")
+        return backup_file
+
+    def init_db(self) -> bool:
+        # Backup the db
+        success = self._dump_database(database_url=self.database_url) # //TODO add actual URL
+
+        # Perform database migrations if backup is successful
+        if success:
+            self._run_alembic_upgrade_head()
 
     def _generate_api_key(self) -> str:
         """
@@ -120,6 +117,22 @@ class UserDatabase:
             """
             cleaned = re.sub(r"[^A-Za-z0-9_]", "", username) # Only allow alphanumeric characters and underscores
             return cleaned.lower() # Convert to lowercase for consistency
+
+    def _delete_user_record(self, user_id: str):
+        with postgres_pool.get_connection() as conn:
+            try:
+                with conn.cursor() as cur:
+                    pass
+                    #cur.execute(
+                    #    f"""
+
+                    #    """
+                    #)
+
+            except Exception as e:
+                logger.error(f"Error creating account: {e}")
+                conn.rollback()
+                return None
 
     def _create_user_record(self, username: str) -> str | None:
         with postgres_pool.get_connection() as conn:
