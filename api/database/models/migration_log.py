@@ -26,3 +26,9 @@ class Test(Base):
     __table_args__ = {"schema": SCHEMA}
 
     test_id = Column(Integer, primary_key=True, autoincrement=True)
+
+class Test(Base):
+    __tablename__ = "test2"
+    __table_args__ = {"schema": SCHEMA}
+
+    test_id = Column(Integer, primary_key=True, autoincrement=True)
