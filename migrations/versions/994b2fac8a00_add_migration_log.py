@@ -24,14 +24,15 @@ def upgrade() -> None:
     op.execute("CREATE SCHEMA IF NOT EXISTS internal")
 
     op.create_table('migration_log',
-    sa.Column('migration_id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('migration_id', sa.Integer(), primary_key=True, autoincrement=True, nullable=False),
     sa.Column('revision', sa.String(length=50), nullable=False),
     sa.Column('direction', sa.String(length=20), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
     sa.Column('info', sa.String(), server_default=sa.text("'No more info included'"), nullable=True),
     sa.Column('timestamp', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.PrimaryKeyConstraint('migration_id'),
-    schema='internal'
+    schema='internal',
+    if_not_exists=True
     )
     # ### end Alembic commands ###
 
