@@ -20,15 +20,3 @@ class MigrationLog(Base):
         nullable=False,
         server_default=text("CURRENT_TIMESTAMP")
     )
-
-class Test(Base):
-    __tablename__ = "testg"
-    __table_args__ = {"schema": SCHEMA}
-
-    test_id = Column(Integer, primary_key=True, autoincrement=True)
-
-class Test(Base):
-    __tablename__ = "test2"
-    __table_args__ = {"schema": SCHEMA}
-
-    test_id = Column(Integer, primary_key=True, autoincrement=True)
