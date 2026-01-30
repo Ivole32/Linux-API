@@ -129,14 +129,25 @@ def run_migrations_online() -> None:
                 current_rev = None
                 if alembic_ctx:
                     current_rev = alembic_ctx.get_current_revision()
-                # direction: detect upgrade or downgrade from command line arguments
-                import sys
+                # Detect migration direction: x-argument > environment variable > sys.argv
                 direction = None
-                for arg in sys.argv:
-                    if "upgrade" in arg:
-                        direction = "upgrade"
-                    elif "downgrade" in arg:
-                        direction = "downgrade"
+                # 1. Alembic x-argument (e.g. --x direction=upgrade)
+                x_args = context.get_x_argument()
+                for x in x_args:
+                    if x.startswith("direction="):
+                        direction = x.split("=", 1)[1]
+                        break
+                # 2. Environment variable
+                if not direction:
+                    direction = os.getenv("ALEMBIC_DIRECTION")
+                # 3. sys.argv fallback
+                if not direction:
+                    import sys
+                    for arg in sys.argv:
+                        if "upgrade" in arg:
+                            direction = "upgrade"
+                        elif "downgrade" in arg:
+                            direction = "downgrade"
                 if not direction:
                     direction = "unknown"
 
@@ -147,13 +158,22 @@ def run_migrations_online() -> None:
             current_rev = None
             if alembic_ctx:
                 current_rev = alembic_ctx.get_current_revision()
-            import sys
+            # Detect migration direction: x-argument > environment variable > sys.argv
             direction = None
-            for arg in sys.argv:
-                if "upgrade" in arg:
-                    direction = "upgrade"
-                elif "downgrade" in arg:
-                    direction = "downgrade"
+            x_args = context.get_x_argument()
+            for x in x_args:
+                if x.startswith("direction="):
+                    direction = x.split("=", 1)[1]
+                    break
+            if not direction:
+                direction = os.getenv("ALEMBIC_DIRECTION")
+            if not direction:
+                import sys
+                for arg in sys.argv:
+                    if "upgrade" in arg:
+                        direction = "upgrade"
+                    elif "downgrade" in arg:
+                        direction = "downgrade"
             if not direction:
                 direction = "unknown"
             log_migration(
