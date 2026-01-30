@@ -1,4 +1,3 @@
-from logging.config import fileConfig
 import os
 
 import logging
@@ -7,13 +6,10 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from dotenv import load_dotenv
 
-from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from sqlalchemy.orm import Session
 from alembic import context
-
-from datetime import datetime
 
 ###################################################
 # Load environment variables from .env file
