@@ -62,5 +62,8 @@ def run_alembic_upgrade_head():
     if database_url:
         alembic_cfg.set_main_option("sqlalchemy.url", database_url)
 
+    # Set migration direction for logging
+    os.environ["ALEMBIC_DIRECTION"] = "upgrade"
+
     # Migrate/Upgrade
     command.upgrade(alembic_cfg, "head")
