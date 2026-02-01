@@ -8,7 +8,6 @@ from slowapi.middleware import SlowAPIMiddleware
 from api.routers.admin_endpoints import router as admin_router
 from api.routers.user_endpoints import router as user_router
 from api.routers.system_endpoints import router as system_router
-from api.routers.unauthenticated_endpoints import router as unauthenticated_router
 from api.routers.mixed_endpoints import router as mixed_router
 
 from api.limiter.limiter import limiter
@@ -71,7 +70,6 @@ async def internal_exception_handler(request: Request, exc: Exception):
     )
 
 # Include routers
-app.include_router(unauthenticated_router, prefix=API_PREFIX)
 app.include_router(user_router, prefix=API_PREFIX)
 app.include_router(admin_router, prefix=API_PREFIX)
 app.include_router(system_router, prefix=API_PREFIX)
