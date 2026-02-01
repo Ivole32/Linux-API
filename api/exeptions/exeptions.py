@@ -12,6 +12,7 @@ class UserRecordCreationError(UserCreationError):
 
 class UserAuthCreationError(UserCreationError):
     """Raised when user auth record could not be created."""
+    pass
 
 class UserPermEditError(Exception):
     """Raised when user perm record could not be set."""
@@ -19,9 +20,11 @@ class UserPermEditError(Exception):
 
 class UserRecordReadError(Exception):
     """Raised when user record could not be read."""
+    pass
 
 class UserPermReadError(Exception):
     """Raised when user perm could not be read."""
+    pass
 
 class UserNotFoundError(Exception):
     """Raised when an user is not found in the database."""
