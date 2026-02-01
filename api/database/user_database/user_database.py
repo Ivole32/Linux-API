@@ -53,6 +53,15 @@ class UserDatabase:
         return secrets.token_urlsafe(32)
     
     def _hash_api_key(self, api_key: str) -> str:
+        """
+        Create a HMAC-SHA256 hash of an API key using configured secret.
+        
+        Args:
+            api_key: The plain API key string to hash
+        
+        Returns:
+            A hexadecimal string representation of the HMAC-SHA256 digest.
+        """
         return hmac.new(
             API_KEY_SECRET.encode(),
             api_key.encode(),
@@ -60,6 +69,16 @@ class UserDatabase:
         ).hexdigest()
     
     def _verify_api_key(self, api_key: str, stored_hash: str) -> bool:
+        """
+        verify an API key against a previously stored HMAC-SHA256 hash.
+
+        Args:
+            api_key: The plain API key provided by the cient
+            stored_hash: The stored hexadecimal HMAC hash to verify against.
+
+        Returns:
+            True if the API key matches the stored hash, otherwise False.
+        """
         return hmac.compare_digest(
             self._hash_api_key(api_key),
             stored_hash
@@ -77,6 +96,22 @@ class UserDatabase:
             return cleaned.lower() # Convert to lowercase for consistency
 
     def _delete_user_record(self, user_id: str) -> bool:
+        """
+        Delete a user record from the users table by user_id
+
+        Args:
+            user_id: The unique identifier of the user to delete
+        
+        Returns:
+            True if the user record was successfully deleted
+        
+        Raises:
+            NoUserdeleted:
+                If no database row was affected (user_id not found).
+
+            UserDeletionError:
+                If an unexpected database error occurs during deletion.
+        """
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor() as cur:
@@ -99,6 +134,19 @@ class UserDatabase:
                 raise UserDeletionError("Unexpected error while deleting user.")
 
     def _create_user_record(self, username: str) -> str:
+        """
+        Create a new user record in the database and return its generated user_id
+
+        Args:
+            username: The username to store for the new user record.
+        
+        Returns:
+            The generated user_id of the newly created user.
+
+        Raises:
+            UserRecordCreationError:
+                If no user_id is returned after the insert operation or if an unexpected dtabase error occuers.
+        """
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor(row_factory=dict_row) as cur:
@@ -125,6 +173,22 @@ class UserDatabase:
                 raise UserRecordCreationError("Unexpected error while creating user record")
             
     def _get_user_record(self, user_id: str) -> dict:
+        """
+        Load a single user record from the database by user_id.
+
+        Args:
+            user_id: The unique identifier of the user to load
+
+        Returns:
+            A dictionary containing the full user record columns and values.
+
+        Raises:
+            UserNotFoundError:
+                If no user record exists for the given user_id.
+            UserrecordReadError:
+                If a database or query error occurs while reading the record.
+        """
+
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor(row_factory=dict_row) as cur:
@@ -146,6 +210,21 @@ class UserDatabase:
                 raise UserRecordReadError(f"User record for user_id {user_id} could not be read")
 
     def _get_user_perm_record(self, user_id: str) -> dict:
+        """
+        Load the perm record for a user from the database.
+
+        Args:
+            user_id: The unique identifier of the user whose perm record shuld be loaded.
+
+        Returns:
+            A dictionary containing the user perminission filds and values.
+
+        Raises:
+            UserNotFoundError:
+                If no perm record exists for the given user_id.
+            UserPermReadError:
+                If an unexpected database error occurs while reading user perm.
+        """
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor(row_factory=dict_row) as cur:
@@ -167,6 +246,14 @@ class UserDatabase:
                 raise UserPermReadError(f"User perm for user_id {user_id} could not be read")
 
     def _get_admin_count(self) -> int:
+        """
+        Count the number of active admin users in the database.
+
+        Returns:
+            The number of users who are both marked as admin and activated.
+            Returns 0 if the query fails due to an unexpected error.
+
+        """
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor() as cur:
@@ -186,6 +273,21 @@ class UserDatabase:
                 return 0
 
     def _create_user_auth_record(self, user_id: str) -> str:
+        """
+        Create the authentication record for a user and return a new API key.
+
+        Args:
+            user_id: The unique identifier of the user whose auth record shuld be created.
+
+        Returns:
+            The newly generated plain API key.
+
+        Raises:
+            NoUserAuthCreatedError:
+                If the update affects zero rows (no auth record found for user_id)
+            UserAuthCreationError:
+                If an unexpected database error occurs during the operation.
+        """
         api_key = self._generate_api_key()
         hashed_api_key = self._hash_api_key(api_key=api_key)
 
@@ -202,7 +304,7 @@ class UserDatabase:
                     )
 
                     if cur.rowcount == 0:
-                        raise NoRowsAffected("Error creating user auth record: No rows affected")
+                        raise NoUserAuthCreatedError("Error creating user auth record: No rows affected")
                     
                     conn.commit()
                     return api_key
@@ -213,8 +315,27 @@ class UserDatabase:
                 raise UserAuthCreationError("Error while creating user auth table.")
 
     def _set_user_perm_record(self, user_id: str, is_admin: bool, activate: bool) -> bool:
+        """
+        Update the perminissin flags for a user in the user_perm table.
+        Note: Can currently only be used for account creation as updating is based on default values.
+
+        Args:
+            user_id: The unique identifier of the user whose permissions should be updated.
+            is_admin: Whether the user should have admin privileges.
+            activate: Whether the user account shouldbe marked as activated.
+
+        Returns:
+            True if the perminissions are already at default values or were updated successfully in the database.
+
+        Raises:
+            NoRowsAffected:
+                If the update query did not modify any row (user_id not found)
+            UserPermEditError:
+                If an unexpected database error occurs during the update.
+        """
         if activate == False and is_admin == False:
             # Since activate is set to false and user is no admin, which are default values there is nothing to do here
+            # // TODO: Update to support changes back to default values -> Only if needed in future features
             return True
         
         else:
@@ -244,6 +365,25 @@ class UserDatabase:
                     raise UserPermEditError("Unexpected error setting user perm record.")
 
     def create_user(self, username: str, is_admin: bool, activate: bool) -> tuple:
+        """
+        Create a complete user including base record, auth data and perminissions.
+
+        Args:
+            username: The requested username (will be sanitized before storage).
+            is_admin: Whether the new user should have admin privileges.
+            activate: Whether the new user should be marked as activated.
+
+        Returns:
+            A tuple of (sanitized_username, user_id, api_key)
+
+        Raises:
+            UserRecordCreatinError:
+                If no user_id is returned in user record creation.
+            UserAuthCreationError:
+                If no api_key is returned in user auth creation.
+            UserPermEditError:
+                If no success return after setting user perm values.
+        """
         sanitized_username = self._sanitize_username(username=username)
 
         user_id = self._create_user_record(username=sanitized_username)
@@ -261,6 +401,21 @@ class UserDatabase:
         return sanitized_username, user_id, api_key
 
     def delete_user(self, user_id: str) -> bool:
+        """
+        Delete a user after validating existence and admin safety constraints.
+
+        Args:
+            user_id: The unique identifier of the user to delete.
+
+        Returns:
+            True if the user was successfully deleted.
+
+        Raises:
+            UserNotFoundError:
+                If no user or perm record exists for the given user_id
+            LastAdminError:
+                If the user is an admin and is the last active admin account.
+        """
         user = self._get_user_record(user_id=user_id)
         if user:
             user_perm = self._get_user_perm_record(user_id=user_id)

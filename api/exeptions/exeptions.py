@@ -35,6 +35,10 @@ class NoUserDeleted(NoRowsAffected):
     """Raised when no user is deleted"""
     pass
 
+class NoUserAuthCreatedError(NoRowsAffected):
+    """Raised when no user auth record is created"""
+    pass
+
 class LastAdminError(Exception):
     """Raised when attemping to remove the final active admin."""
     pass
