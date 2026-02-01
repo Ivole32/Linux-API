@@ -12,50 +12,7 @@ user_db, _ = get_user_database()
 @router.delete(
     "/delete",
     tags=["Admin", "User"],
-    description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account.",
-    responses={
-        200: {
-            "description": "User was deleted successfully",
-            "content": {
-                "application/json": {
-                    "example": {"status": "success"}
-                }
-            }
-        },
-        400: {
-            "description": "User deletion failed or user does not exist",
-            "content": {
-                "application/json": {
-                    "example": {"detail": "User deletion failed or user does not exist"}
-                }
-            }
-        },
-        401: {
-            "description": "Unauthorized. Invalid or missing API key",
-            "content": {
-                "application/json": {
-                    "example": {"detail": "Invalid or missing API key"}
-                }
-            }
-        },
-        403: {
-            "description": "You don't have the rights to delete that user",
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "not_admin": {
-                            "summary": "Normal user deleting another account",
-                            "value": {"detail": "Admin access required for performing this action on other user's accounts."}
-                        },
-                        "admin_account_deletion_forbidden": {
-                            "summary": "The admin account cannot be deleted",
-                            "value": {"detail": "The admin account cannot be deleted."}
-                        }
-                    }
-                }
-            }
-        }
-    }
+    description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account."
 )
 @limiter.limit("5/minute")
 def delete_user(request: Request, username: str, user_data = get_user_role("user")):

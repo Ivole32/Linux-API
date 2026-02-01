@@ -5,24 +5,7 @@ from api.limiter.limiter import limiter
 
 router = APIRouter()
 
-@router.get(
-    "/",
-    tags=["General"],
-    description="The landing endpoint of the API. It returns a message with the documentation link.",
-    responses={
-        200: {
-            "description": "The server works",
-            "content": {
-                "application/json": {
-                    "example": {
-                        "message": "Docs at /docs",
-                        "doc-link": "/docs"
-                    }
-                }
-            }
-        }
-    }
-)
+@router.get("/", tags=["General"], description="The landing endpoint of the API. It returns a message with the documentation link.")
 @limiter.limit("10/minute")
 def landing_page(request: Request):
     return JSONResponse(content={
