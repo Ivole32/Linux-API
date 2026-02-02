@@ -21,7 +21,7 @@ class UserAuth(Base):
         primary_key=True,
         nullable=False
     )
-    api_key_hash = Column(String, nullable=False)
+    api_key_hash = Column(String, nullable=False, unique=True)
 
 class UserPerm(Base):
     __tablename__ = "user_perm"
