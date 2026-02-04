@@ -29,12 +29,12 @@ def startup_database():
     if needs_migration and AUTO_MIGRATE_DATABASE_ON_STARTUP:
         run_alembic_upgrade_head()
 
-    # Auto reset database in debug/demo mode
-    if DEMO_MODE and RESET_DATABASE_WHEN_DEMO:
-        user_database.flush_database()
-
-    # Set database to ready when everything worked
     try:
+        # Auto reset database in debug/demo mode
+        if DEMO_MODE and RESET_DATABASE_WHEN_DEMO:
+            user_database.flush_database()
+
+        # Set database to ready when everything worked
         user_database.init_db()
     except Exception:
         pass
