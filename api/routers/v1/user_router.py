@@ -39,4 +39,5 @@ def register_user(request: Request, user_info: UserRegisterRequest):
     except (NoUserPermEditedError, UserPermEditError):
         HTTPException(status_code=500, detail="No user perm record could be created")
 
-    return {"username": username, "user_id": user_id, "api_key": plain_api_key}
+    else:
+        return {"username": username, "user_id": user_id, "api_key": plain_api_key}
