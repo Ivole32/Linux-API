@@ -7,10 +7,14 @@ from slowapi.middleware import SlowAPIMiddleware
 
 # Legacy API routes
 # => Old database system, ...
-from api.routers.legacy.admin_endpoints import router as admin_router
-from api.routers.legacy.user_endpoints import router as user_router
-from api.routers.legacy.system_endpoints import router as system_router
-from api.routers.legacy.mixed_endpoints import router as mixed_router
+from api.routers.legacy.admin_endpoints import router as legacy_admin_router
+from api.routers.legacy.user_endpoints import router as legacy_user_router
+from api.routers.legacy.system_endpoints import router as legacy_system_router
+from api.routers.legacy.mixed_endpoints import router as legacy_mixed_router
+
+# New API routes
+# => New database system, ...
+from api.routers.v1.user_router import router as v1_user_router
 
 # Import rate limiter
 from api.limiter.limiter import limiter
@@ -75,10 +79,13 @@ async def internal_exception_handler(request: Request, exc: Exception):
 # Include legacy routers
 # Old database system
 # => Other file, logic
-app.include_router(user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
-app.include_router(admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
-app.include_router(system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
-app.include_router(mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+app.include_router(legacy_user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+app.include_router(legacy_admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+app.include_router(legacy_system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+app.include_router(legacy_mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+
+# Include v1 routers
+app.include_router(v1_user_router, prefix=API_PREFIX, tags=["v1"])
 
 # Add custom headers middleware
 add_header_middleware(app)
