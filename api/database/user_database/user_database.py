@@ -144,8 +144,10 @@ class UserDatabase:
             The generated user_id of the newly created user.
 
         Raises:
-            UserRecordCreationError:
-                If no user_id is returned after the insert operation or if an unexpected dtabase error occuers.
+            NoDatabaseReturnError:
+                If no user_id is returned after the insert operation.
+            UserRecordCreationError:     
+                If an unexpected dtabase error occuers.
         """
         with postgres_pool.get_connection() as conn:
             try:
@@ -165,7 +167,7 @@ class UserDatabase:
                 if user_id:
                     return user_id
                 else:
-                    raise UserRecordCreationError("No user_id was returned after postsql operation")
+                    raise
 
             except Exception as e:
                 logger.error(f"Error creating account: {e}")
@@ -354,7 +356,7 @@ class UserDatabase:
                         )
 
                         if cur.rowcount == 0:
-                            raise NoRowsAffected("Error setting user perm record: No rows affected")
+                            raise NoUserPermEditedError("Error setting user perm record: No rows affected")
                         
                         conn.commit()
                         return True
@@ -428,6 +430,26 @@ class UserDatabase:
 
         else:
             raise UserNotFoundError("Requested user not found")
+
+    def flush_database(self) -> None:
+        with postgres_pool.get_connection() as conn:
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        f"""TRUNCATE TABLE {self.schema}.user CASCADE;"""
+                    )
+
+                if cur.rowcount == 0:
+                    raise NoRowsAffected("Error flushing database: No rows affected.")
+            
+                logger.log("Database Flushed...")
+                conn.commit()
+
+            except Exception as e:
+                logger.error(f"Error flushing database: {e}")
+                conn.rollback()
+                raise DatabaseFlushError("Unexpected error flushing database.")
+
 
     def is_ready(self) -> bool:
         """

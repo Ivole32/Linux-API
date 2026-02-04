@@ -26,6 +26,10 @@ class UserPermReadError(Exception):
     """Raised when user perm could not be read."""
     pass
 
+class DatabaseFlushError(Exception):
+    """Raised when database could not be flushed"""
+    pass
+
 class UserNotFoundError(Exception):
     """Raised when an user is not found in the database."""
     pass
@@ -40,6 +44,10 @@ class NoUserDeleted(NoRowsAffected):
 
 class NoUserAuthCreatedError(NoRowsAffected):
     """Raised when no user auth record is created"""
+    pass
+
+class NoUserPermEditedError(NoRowsAffected):
+    """Raised when no user perm record is edited"""
     pass
 
 class LastAdminError(Exception):

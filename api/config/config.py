@@ -18,6 +18,7 @@ API_KEY_SECRET = os.getenv("API_KEY_SECRET", None) # Use None if not set in .env
 
 # Demo Mode
 DEMO_MODE = True
+RESET_DATABASE_WHEN_DEMO = True
 
 # API configuration
 API_TITLE = "Linux API" # Short title for the API
@@ -30,6 +31,10 @@ API_DOCS_ENABLED = True # Enable or disable API documentation
 # Rate limiting configuration
 API_RATE_LIMIT_ENABLED = False # Enable or disable rate limiting
 API_DEFAULT_RATE_LIMITS = ["100/minute"] # Default rate limits
+
+# User configurtion
+USERNAME_MIN_LENGHT = 4
+USERNAME_MAX_LENGHT = 18
 
 # PostgreSQL configuration
 # (Floats must stay as floats)
