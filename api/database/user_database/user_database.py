@@ -117,7 +117,7 @@ class UserDatabase:
                 with conn.cursor() as cur:
                     cur.execute(
                         f"""
-                        DELETE FROM {self.schema}.users WHERE user_id = %s
+                        DELETE FROM {self.schema}.user WHERE user_id = %s
                         """,
                         (user_id,)
                     )
@@ -154,7 +154,7 @@ class UserDatabase:
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         f"""
-                        INSERT INTO {self.schema}.users (username)
+                        INSERT INTO {self.schema}.user (username)
                         VALUES (%s)
                         RETURNING user_id;
                         """,
@@ -437,6 +437,9 @@ class UserDatabase:
                 with conn.cursor() as cur:
                     cur.execute(
                         f"""TRUNCATE TABLE {self.schema}.user CASCADE;"""
+                    )
+                    cur.execute(
+                        """TRUNCATE TABLE {self.schema}.user CASCADE;"""
                     )
 
                 if cur.rowcount == 0:
