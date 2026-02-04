@@ -438,9 +438,6 @@ class UserDatabase:
                     cur.execute(
                         f"""TRUNCATE TABLE {self.schema}.user CASCADE;"""
                     )
-                    cur.execute(
-                        """TRUNCATE TABLE {self.schema}.user CASCADE;"""
-                    )
 
                 if cur.rowcount == 0:
                     raise NoRowsAffected("Error flushing database: No rows affected.")
