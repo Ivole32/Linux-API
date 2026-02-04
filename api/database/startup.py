@@ -34,4 +34,7 @@ def startup_database():
         user_database.flush_database()
 
     # Set database to ready when everything worked
-    user_database.init_db()
+    try:
+        user_database.init_db()
+    except Exception:
+        pass
