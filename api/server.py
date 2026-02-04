@@ -66,7 +66,7 @@ app.openapi = custom_openapi
 
 @app.exception_handler(Exception)
 async def internal_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled error: {exc}", exc_info=True)
+    logger.error(f"Unhandled error: {exc}")
     return JSONResponse(
         status_code=500,
         content={"detail": "500 Internal server error"},

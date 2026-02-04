@@ -120,7 +120,6 @@ class PostgresPool:
                 log(
                     WARNING,
                     f"Pool init attempt {attempt}/{attempts} failed: {exc}",
-                    exc_info=sys.exc_info(),
                 )
                 self.close(silent=True)
                 if attempt < attempts:
