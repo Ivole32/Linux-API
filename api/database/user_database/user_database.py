@@ -4,6 +4,7 @@ The main module for managing user database operations.
 
 # Import psycopg errors
 import psycopg.errors
+from psycopg.errors import UniqueViolation
 
 # Import psycopg DictCursor
 from psycopg.rows import dict_row
@@ -171,6 +172,9 @@ class UserDatabase:
                     return user_id
                 else:
                     raise
+
+            except UniqueViolation:
+                raise
 
             except Exception as e:
                 logger.error(f"Error creating account: {e}")

@@ -16,6 +16,8 @@ from api.models.user import UserRegisterRequest
 # Import exceptions
 from api.exeptions.exeptions import *
 
+from psycopg.errors import UniqueViolation
+
 check_database_ready = lambda: ensure_class_ready(user_database, name="UserDatabase")
 
 router = APIRouter(
@@ -38,6 +40,9 @@ def register_user(request: Request, user_info: UserRegisterRequest):
     
     except (NoUserPermEditedError, UserPermEditError):
         return HTTPException(status_code=500, detail="No user perm record could be created")
+
+    except UniqueViolation:
+        return HTTPException(status_code=409, detail="This username is already taken")
 
     except Exception:
         return HTTPException(status_code=500, detail="Unexpected error while creating user.")
