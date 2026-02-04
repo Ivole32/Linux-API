@@ -75,10 +75,10 @@ async def internal_exception_handler(request: Request, exc: Exception):
 # Include legacy routers
 # Old database system
 # => Other file, logic
-app.include_router(user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
-app.include_router(admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
-app.include_router(system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
-app.include_router(mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
+app.include_router(user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+app.include_router(admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+app.include_router(system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+app.include_router(mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
 
 # Add custom headers middleware
 add_header_middleware(app)
