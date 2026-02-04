@@ -8,6 +8,7 @@ python-dotenv>=1.2.1
 alembic>=1.18.3
 sqlalchemy>=2.0.46
 psycopg>=3.3.2
+psycopg2-pool>=1.2
 psycopg2-binary>=2.9.11
 
 # Pinned by snyk to fix https://security.snyk.io/vuln/SNYK-PYTHON-ZIPP-7430899
