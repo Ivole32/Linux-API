@@ -442,7 +442,7 @@ class UserDatabase:
                 if cur.rowcount == 0:
                     raise NoRowsAffected("Error flushing database: No rows affected.")
             
-                logger.log("Database Flushed...")
+                logger.info("Database Flushed...")
                 conn.commit()
 
             except Exception as e:
