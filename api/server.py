@@ -5,11 +5,14 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from slowapi.middleware import SlowAPIMiddleware
 
-from api.routers.admin_endpoints import router as admin_router
-from api.routers.user_endpoints import router as user_router
-from api.routers.system_endpoints import router as system_router
-from api.routers.mixed_endpoints import router as mixed_router
+# Legacy API routes
+# => Old database system, ...
+from api.routers.legacy.admin_endpoints import router as admin_router
+from api.routers.legacy.user_endpoints import router as user_router
+from api.routers.legacy.system_endpoints import router as system_router
+from api.routers.legacy.mixed_endpoints import router as mixed_router
 
+# Import rate limiter
 from api.limiter.limiter import limiter
 
 # Import database startup functions
@@ -21,7 +24,7 @@ from api.middleware.headers import add_header_middleware
 # Import CORS middleware
 from api.middleware.cors import setup_cors
 
-from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, API_DOCS_ENABLED, DEMO_MODE
+from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, LEGACY_API_PREFIX, API_DOCS_ENABLED, DEMO_MODE
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -69,11 +72,13 @@ async def internal_exception_handler(request: Request, exc: Exception):
         content={"detail": "500 Internal server error"},
     )
 
-# Include routers
-app.include_router(user_router, prefix=API_PREFIX)
-app.include_router(admin_router, prefix=API_PREFIX)
-app.include_router(system_router, prefix=API_PREFIX)
-app.include_router(mixed_router, prefix=API_PREFIX)
+# Include legacy routers
+# Old database system
+# => Other file, logic
+app.include_router(user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
+app.include_router(admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
+app.include_router(system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
+app.include_router(mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"])
 
 # Add custom headers middleware
 add_header_middleware(app)

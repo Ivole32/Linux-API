@@ -24,6 +24,7 @@ API_TITLE = "Linux API" # Short title for the API
 API_DESCRIPTION = "A linux API server to get system informations and other live informations about your linux machine.." # Description of the API
 API_VERSION = "dev" # Version of the API
 API_PREFIX = f"/api/{API_VERSION}" # Prefix for all API endpoints
+LEGACY_API_PREFIX = f"/api/legacy" # Prefix for old legacy routes
 API_DOCS_ENABLED = True # Enable or disable API documentation
 
 # Rate limiting configuration

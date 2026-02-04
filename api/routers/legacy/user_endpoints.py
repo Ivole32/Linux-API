@@ -6,7 +6,7 @@ from api.core_functions.auth import get_user_role
 
 router = APIRouter(tags=["User"])
 
-@router.get("/user/user-info", description="This endpoint returns the key owner's user informations.")
+@router.get("/user/user-info", description="This endpoint returns the key owner's user informations.", deprecated=True)
 @limiter.limit("10/minute")
 def user_info(request: Request, user_data = get_user_role("user")):
     return JSONResponse(content={
