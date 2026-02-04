@@ -128,6 +128,9 @@ class UserDatabase:
                     else:
                         return True
 
+            except NoUserDeleted:
+                raise
+
             except Exception as e:
                 logger.error(f"Error deleting account: {e}")
                 conn.rollback()
@@ -207,6 +210,9 @@ class UserDatabase:
                     else:
                         raise UserNotFoundError(f"User record for user_id {user_id} could not be loaded")
 
+            except UserNotFoundError:
+                raise
+
             except Exception as e:
                 logger.error(f"Error getting user record: {e}")
                 raise UserRecordReadError(f"User record for user_id {user_id} could not be read")
@@ -242,6 +248,9 @@ class UserDatabase:
                     return user_perm
                 else:
                     raise UserNotFoundError(f"User perm record for user_id {user_id} could not be loaded")
+
+            except UserNotFoundError:
+                raise
 
             except Exception as e:
                 logger.error(f"Error getting user perm record: {e}")
@@ -310,7 +319,10 @@ class UserDatabase:
                     
                     conn.commit()
                     return api_key
-                
+            
+            except NoUserAuthCreatedError:
+                raise
+
             except Exception as e:
                 logger.error(f"Error creating creating auth record: {e}")
                 conn.rollback()
@@ -360,7 +372,10 @@ class UserDatabase:
                         
                         conn.commit()
                         return True
-                
+
+                except NoUserPermEditedError:
+                    raise
+
                 except Exception as e:
                     logger.error(f"Error setting perm record: {e}")
                     conn.rollback()
@@ -444,6 +459,9 @@ class UserDatabase:
             
                 logger.info("Database Flushed...")
                 conn.commit()
+
+            except NoRowsAffected:
+                raise
 
             except Exception as e:
                 logger.error(f"Error flushing database: {e}")
