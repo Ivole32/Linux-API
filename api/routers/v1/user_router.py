@@ -33,19 +33,19 @@ def register_user(request: Request, user_info: UserRegisterRequest):
         username, user_id, plain_api_key = user_database.create_user(username=user_info.username, is_admin=user_info.is_admin, activate=user_info.activate)
 
     except UserRecordCreationError:
-        return HTTPException(status_code=500, detail="User record could not be created")
+        raise HTTPException(status_code=500, detail="User record could not be created")
     
     except (UserAuthCreationError, NoUserAuthCreatedError):
-        return HTTPException(status_code=500, detail="User auth record could not be set")
+        raise HTTPException(status_code=500, detail="User auth record could not be set")
     
     except (NoUserPermEditedError, UserPermEditError):
-        return HTTPException(status_code=500, detail="No user perm record could be created")
+        raise HTTPException(status_code=500, detail="No user perm record could be created")
 
     except UniqueViolation:
-        return HTTPException(status_code=409, detail="This username is already taken")
+        raise HTTPException(status_code=409, detail="This username is already taken")
 
     except Exception:
-        return HTTPException(status_code=500, detail="Unexpected error while creating user.")
+        raise HTTPException(status_code=500, detail="Unexpected error while creating user.")
 
     else:
         return {"username": username, "user_id": user_id, "api_key": plain_api_key}

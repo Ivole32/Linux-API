@@ -152,6 +152,8 @@ class UserDatabase:
                 If no user_id is returned after the insert operation.
             UserRecordCreationError:     
                 If an unexpected dtabase error occuers.
+            UniqueViolation:
+                If an unique key is not unique
         """
         with postgres_pool.get_connection() as conn:
             try:
