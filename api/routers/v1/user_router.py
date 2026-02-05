@@ -38,7 +38,7 @@ def register_user(request: Request, user_info: UserRegisterRequest):
     except (UserAuthCreationError, NoUserAuthCreatedError):
         raise HTTPException(status_code=500, detail="User auth record could not be set")
     
-    except (NoUserPermEditedError, UserPermEditError):
+    except (UserPermEditError, NoUserPermEditedError):
         raise HTTPException(status_code=500, detail="No user perm record could be created")
 
     except UniqueViolation:

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from api.limiter.limiter import limiter
-from api.core_functions.auth import get_user_role
+from api.auth.legacy_auth import get_user_role
 
 router = APIRouter()
 
