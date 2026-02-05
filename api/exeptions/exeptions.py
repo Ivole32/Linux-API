@@ -53,3 +53,11 @@ class NoUserPermEditedError(NoRowsAffected):
 class LastAdminError(Exception):
     """Raised when attemping to remove the final active admin."""
     pass
+
+class KeyHashError(Exception):
+    """Raised when an API key could not be hashed"""
+    pass
+
+class APIKeyLookupError(Exception):
+    """Raised when an unexpected error happens while checking for api key existence"""
+    pass

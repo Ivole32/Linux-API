@@ -63,11 +63,14 @@ class UserDatabase:
         Returns:
             A hexadecimal string representation of the HMAC-SHA256 digest.
         """
-        return hmac.new(
-            API_KEY_SECRET.encode(),
-            api_key.encode(),
-            hashlib.sha256
-        ).hexdigest()
+        try:
+            return hmac.new(
+                API_KEY_SECRET.encode(),
+                api_key.encode(),
+                hashlib.sha256
+            ).hexdigest()
+        except:
+            raise KeyHashError("API key could not be hashed")
     
     def _verify_api_key(self, api_key: str, stored_hash: str) -> bool:
         """
@@ -223,7 +226,7 @@ class UserDatabase:
                 logger.error(f"Error getting user record: {e}")
                 raise UserRecordReadError(f"User record for user_id {user_id} could not be read")
 
-    def _get_user_perm_record(self, user_id: str) -> dict:
+    def _get_user_perm_record(self, user_id: str = None, hashed_api_key: str = None) -> dict:
         """
         Load the perm record for a user from the database.
 
@@ -244,16 +247,20 @@ class UserDatabase:
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         f"""
-                        SELECT * FROM users.user_perm WHERE user_id = %s
+                        SELECT up.*
+                        FROM {self.schema}.user_perm up
+                        JOIN {self.schema}.auth a ON up.user_id = a.user_id
+                        WHERE up.user_id = %s
+                            OR a.api_key_hash
                         """,
-                        (user_id,)
+                        (user_id, hashed_api_key)
                     )
 
                 user_perm = cur.fetchone()
                 if user_perm:
                     return user_perm
                 else:
-                    raise UserNotFoundError(f"User perm record for user_id {user_id} could not be loaded")
+                    raise UserNotFoundError(f"User perm record for {"user_id " + user_id if user_id else "api_key_hash"} could not be loaded")
 
             except UserNotFoundError:
                 raise
@@ -306,7 +313,11 @@ class UserDatabase:
                 If an unexpected database error occurs during the operation.
         """
         api_key = self._generate_api_key()
-        hashed_api_key = self._hash_api_key(api_key=api_key)
+
+        try:
+            hashed_api_key = self._hash_api_key(api_key=api_key)
+        except KeyHashError:
+            raise
 
         with postgres_pool.get_connection() as conn:
             try:
@@ -452,6 +463,33 @@ class UserDatabase:
         else:
             raise UserNotFoundError("Requested user not found")
 
+    def _get_user_id_by_api_key(self, hashed_api_key: str) -> bool:
+        with postgres_pool.get_connection() as conn:
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        f"""
+                        SELECT user_id FROM {self.schema}.auth
+                        WHERE ai_key_hash = %s
+                        LIMIT 1
+                        """, (hashed_api_key,))
+                    
+                    row = cur.fetchone()
+                    return row[0] if row else None
+            
+            except Exception as e:
+                logger.error(f"Error checking for api_key exostence: {e}")
+                raise APIKeyLookupError("Unexpected error while performing api_key lookup")
+
+    def get_user_perm_by_api_key(self, api_key: str) -> bool:
+        hashed_api_key = self._hash_api_key(api_key=api_key)
+        if not hashed_api_key:
+            raise KeyHashError("No hashed API key was returned")
+        
+        user = self._get_user_perm_record(hashed_api_key=hashed_api_key)
+
+        return user
+
     def flush_database(self) -> None:
         with postgres_pool.get_connection() as conn:
             try:
@@ -473,7 +511,6 @@ class UserDatabase:
                 logger.error(f"Error flushing database: {e}")
                 conn.rollback()
                 raise DatabaseFlushError("Unexpected error flushing database.")
-
 
     def is_ready(self) -> bool:
         """

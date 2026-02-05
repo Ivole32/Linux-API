@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, HTTPException
 
 from api.limiter.limiter import limiter
 from api.auth.legacy_auth import get_user_role
-from api.database.user_database.user_database_old import get_user_database, UserRole
+from api.database.user_database.legacy_user_database import get_user_database, UserRole
 
 user_db, _ = get_user_database()
 

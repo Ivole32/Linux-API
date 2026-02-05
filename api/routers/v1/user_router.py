@@ -35,7 +35,7 @@ def register_user(request: Request, user_info: UserRegisterRequest):
     except UserRecordCreationError:
         raise HTTPException(status_code=500, detail="User record could not be created")
     
-    except (UserAuthCreationError, NoUserAuthCreatedError):
+    except (UserAuthCreationError, NoUserAuthCreatedError, KeyHashError):
         raise HTTPException(status_code=500, detail="User auth record could not be set")
     
     except (UserPermEditError, NoUserPermEditedError):
