@@ -11,7 +11,6 @@ user_db, _ = get_user_database()
 
 @router.delete(
     "/delete",
-    tags=["Admin", "User"],
     description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account."
 )
 @limiter.limit("5/minute")

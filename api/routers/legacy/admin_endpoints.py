@@ -6,7 +6,7 @@ from api.database.user_database.user_database_old import get_user_database, User
 
 user_db, _ = get_user_database()
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/admin")
 
 @router.get("/admin-area", description="A testing endpoint.")
 @limiter.limit("10/minute")
