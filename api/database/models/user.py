@@ -35,3 +35,7 @@ class UserPerm(Base):
     )
     is_admin = Column(Boolean, server_default=text("false"))
     activated = Column(Boolean, server_default=text("false"))
+
+
+# Relationships defined in:
+# - f84c0e0cdb7e_fixed_error_with_user_child_creation_in_
