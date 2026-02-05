@@ -25,6 +25,9 @@ from api.database.startup import startup_database
 # Import header middleware
 from api.middleware.headers import add_header_middleware
 
+# Import legacy middleware
+from api.middleware.legacy import add_legacy_middleware
+
 # Import CORS middleware
 from api.middleware.cors import setup_cors
 
@@ -89,6 +92,9 @@ app.include_router(v1_user_router, prefix=API_PREFIX, tags=["v1"])
 
 # Add custom headers middleware
 add_header_middleware(app)
+
+# Add custom legacy middleware
+add_legacy_middleware(app)
 
 # Setup CORS middleware
 setup_cors(app)
