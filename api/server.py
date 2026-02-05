@@ -79,6 +79,9 @@ async def internal_exception_handler(request: Request, exc: Exception):
         content={"detail": "500 Internal server error"},
     )
 
+# Include v1 routers
+app.include_router(v1_user_router, prefix=API_PREFIX, tags=["v1"])
+
 # Include legacy routers
 # Old database system
 # => Other file, logic
@@ -86,9 +89,6 @@ app.include_router(legacy_user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"]
 app.include_router(legacy_admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
 app.include_router(legacy_system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
 app.include_router(legacy_mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
-
-# Include v1 routers
-app.include_router(v1_user_router, prefix=API_PREFIX, tags=["v1"])
 
 # Add custom headers middleware
 add_header_middleware(app)
