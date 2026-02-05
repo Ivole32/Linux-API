@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from api.limiter.limiter import limiter
 from api.core_functions.auth import get_user_role
 
-router = APIRouter(tags=["User"])
+router = APIRouter()
 
 @router.get("/user/user-info", description="This endpoint returns the key owner's user informations.")
 @limiter.limit("10/minute")
