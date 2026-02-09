@@ -61,3 +61,7 @@ class KeyHashError(Exception):
 class APIKeyLookupError(Exception):
     """Raised when an unexpected error happens while checking for api key existence"""
     pass
+
+class APIKeyEmptyError(Exception):
+    """Raised when an empty API key is sen dto the server via a header value"""
+    pass

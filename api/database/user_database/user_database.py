@@ -485,7 +485,7 @@ class UserDatabase:
 
     def get_user_perm_by_api_key(self, api_key: str) -> bool:
         if not api_key:
-            return None
+            raise APIKeyEmptyError("API Key is empty")
 
         hashed_api_key = self._hash_api_key(api_key=api_key)
         if not hashed_api_key:

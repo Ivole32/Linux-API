@@ -12,6 +12,9 @@ def get_current_user_from_api_key(x_api_key: str = Header(user_database.demo_api
         else:
             return user
 
+    except APIKeyEmptyError:
+        raise HTTPException(status_code=400, detail="API key value can not be empty")
+
     except UserNotFoundError:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
