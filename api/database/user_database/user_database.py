@@ -484,6 +484,9 @@ class UserDatabase:
                 raise APIKeyLookupError("Unexpected error while performing api_key lookup")
 
     def get_user_perm_by_api_key(self, api_key: str) -> bool:
+        if not api_key:
+            return None
+
         hashed_api_key = self._hash_api_key(api_key=api_key)
         if not hashed_api_key:
             raise KeyHashError("No hashed API key was returned")
