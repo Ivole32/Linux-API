@@ -500,6 +500,9 @@ class UserDatabase:
             self.demo_api_key = self.create_user(username="admin", is_admin=True, activate=True)[2] # return API key
             print(f"Init API key for v1 routes: {self.demo_api_key}")
 
+            if not DEMO_MODE:
+                self.demo_api_key = None
+
         except UniqueViolation:
             if DEMO_MODE and not RESET_DATABASE_WHEN_DEMO:
                 logger.critical("When demo mode is enabled but the database is not reseted at startup by default there won't be a API for users to test with. Set RESET_DATABASE_WHEN_DEMO = True or delete admin account manually.")

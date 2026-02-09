@@ -3,7 +3,7 @@ from api.database.user_database.user_database import user_database
 
 from api.exeptions.exeptions import *
 
-def get_current_user_from_api_key(x_api_key: str = Header(user_database.demo_api_key)):
+def get_current_user_from_api_key(x_api_key: str = Header(default=user_database.demo_api_key)):
     try:
         user = user_database.get_user_perm_by_api_key(x_api_key)
         if not user:
