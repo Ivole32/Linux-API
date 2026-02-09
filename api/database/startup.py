@@ -36,5 +36,6 @@ def startup_database():
 
         # Set database to ready when everything worked
         user_database.init_db()
+
     except Exception:
         pass

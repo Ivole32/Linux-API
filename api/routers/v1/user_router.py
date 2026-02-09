@@ -21,11 +21,13 @@ from psycopg.errors import UniqueViolation
 from api.auth.auth import get_current_admin_user
 
 check_database_ready = lambda: ensure_class_ready(user_database, name="UserDatabase")
+create_init_user = lambda: user_database.create_init_user()
 
 router = APIRouter(
     prefix="/user",
     tags=["User"],
-    dependencies=[Depends(check_database_ready)] # Only handle requests if database is ready
+    dependencies=[Depends(check_database_ready)], # Only handle requests if database is ready
+    on_startup=[create_init_user]
 )
 
 @router.post("/register", description="Register a new user if you are admin.")

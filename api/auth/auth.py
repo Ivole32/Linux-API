@@ -3,7 +3,7 @@ from api.database.user_database.user_database import user_database
 
 from api.exeptions.exeptions import *
 
-def get_current_user_from_api_key(x_api_key: str = Header(...)):
+def get_current_user_from_api_key(x_api_key: str = Header(user_database.demo_api_key)):
     try:
         user = user_database.get_user_perm_by_api_key(x_api_key)
         if not user:
@@ -20,5 +20,5 @@ def get_current_user_from_api_key(x_api_key: str = Header(...)):
     
 def get_current_admin_user(user = Depends(get_current_user_from_api_key)):
     if not user["is_admin"]:
-        raise HTTPException(403, "Admin required")
+        raise HTTPException(403, "Admin access required")
     return user
