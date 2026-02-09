@@ -251,7 +251,7 @@ class UserDatabase:
                         FROM {self.schema}.user_perm up
                         JOIN {self.schema}.auth a ON up.user_id = a.user_id
                         WHERE up.user_id = %s
-                            OR a.api_key_hash
+                            OR a.api_key_hash = %s
                         """,
                         (user_id, hashed_api_key)
                     )
