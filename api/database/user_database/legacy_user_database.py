@@ -108,7 +108,7 @@ class SecureUserDatabase:
             api_key = self._generate_api_key()
 
         if username == "admin" and role == UserRole.ADMIN and first_run:
-            print(f"Init admin key: {api_key}")
+            print(f"Init admin key (only legacy routes): {api_key}")
 
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()

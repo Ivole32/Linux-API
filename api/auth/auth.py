@@ -3,17 +3,25 @@ from api.database.user_database.user_database import user_database
 
 from api.exeptions.exeptions import *
 
-def verify_api_key(x_api_key: str = Header(...)):
+def get_current_user_from_api_key(x_api_key: str = Header(...), admin_required: bool = True):
     try:
-        user_database.get_user_perm_by_api_key("test")
+        user = user_database.get_user_perm_by_api_key(x_api_key)
+        if not user:
+            raise UserPermReadError("Unexpected error loading user_perm: get_user_perm_by_api_key returned Null")
 
+        else:
+            if admin_required and user["is_admin"]:
+                return True, user
+            else:
+                return False, []
 
-
-    # // TODO
     except UserNotFoundError:
-        # User nor found or wrong api key
-        pass
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
-    except (Exception, KeyHashError):
-        # Unexpected error
-        pass
+    except (Exception, UserPermReadError, KeyHashError):
+        raise HTTPException(status_code=500, detail="Unexpected error while authentificating user")
+    
+def get_current_admin_user(user = Depends(get_current_user_from_api_key)):
+    if not user["is_admin"]:
+        raise HTTPException(403, "Admin required")
+    return user
