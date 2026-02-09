@@ -256,7 +256,7 @@ class UserDatabase:
                         (user_id, hashed_api_key)
                     )
 
-                user_perm = cur.fetchone()
+                    user_perm = cur.fetchone()
                 if user_perm:
                     return user_perm
                 else:
