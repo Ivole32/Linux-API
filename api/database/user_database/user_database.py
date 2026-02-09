@@ -249,7 +249,7 @@ class UserDatabase:
                         f"""
                         SELECT up.*
                         FROM {self.schema}.user_perm up
-                        JOIN {self.schema}.auth a ON up.user_id = a.user_id
+                        JOIN {self.schema}.user_auth a ON up.user_id = a.user_id
                         WHERE up.user_id = %s
                             OR a.api_key_hash = %s
                         """,

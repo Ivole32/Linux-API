@@ -39,3 +39,4 @@ class UserPerm(Base):
 
 # Relationships defined in:
 # - f84c0e0cdb7e_fixed_error_with_user_child_creation_in_
+# - 37abce9a74cb_fixed_missing_relationships_table_
