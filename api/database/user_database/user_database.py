@@ -36,6 +36,8 @@ class UserDatabase:
         self._ready = False
         self.schema = "users"
 
+        self.demo_api_key = None
+
         from dotenv import load_dotenv
         load_dotenv() # Load .env
 
