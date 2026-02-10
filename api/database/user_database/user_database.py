@@ -501,6 +501,7 @@ class UserDatabase:
             print(f"Init API key for v1 routes: {self.demo_api_key}")
 
             if not DEMO_MODE:
+                logger.debug("Demo API key not saved because DEMO mode is not enabled")
                 self.demo_api_key = None
 
         except UniqueViolation:
