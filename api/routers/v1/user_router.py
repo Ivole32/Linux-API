@@ -32,7 +32,7 @@ router = APIRouter(
 
 @router.post("/register", description="Register a new user if you are admin.")
 @limiter.limit("5/minute")
-def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(get_current_admin)):
+def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(get_current_user)):
     try:
         username, user_id, plain_api_key = user_database.create_user(username=user_info.username, is_admin=user_info.is_admin, activate=user_info.activate)
 

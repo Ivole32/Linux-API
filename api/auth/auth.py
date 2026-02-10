@@ -4,10 +4,7 @@ from api.database.user_database.user_database import user_database
 from api.exeptions.exeptions import *
 
 def _get_current_user_from_api_key(
-    x_api_key: str = Header(
-        default_factory=lambda: user_database.demo_api_key,
-        description="API key for authentication. Default is demo key if not provided."
-    )
+    x_api_key: str = Header(description="API key for authentication. Default is demo key if not provided.")
 ) -> dict:
     try:
         user = user_database.get_user_perm_by_api_key(x_api_key)
@@ -31,10 +28,12 @@ def get_current_admin(user=Depends(_get_current_user_from_api_key)):
         raise HTTPException(status_code=403, detail="API key has to be activated")
     return user
 
-def get_current_user(user=Depends(_get_current_user_from_api_key)):
+def get_current_user():
     """
     Dependency for requiring an activated user. Uses demo API key as default in docs.
     """
-    if not user["activated"]:
-        raise HTTPException(status_code=403, detail="API key has to be activated")
-    return user
+    def dependency(x_api_key: str = Header(user_database.demo_api_key), user = Depends(_get_current_user_from_api_key)):
+        if not user["activated"]:
+            raise HTTPException(status_code=403, detail="API key has to be activated")
+        return user
+    return Depends(dependency)
