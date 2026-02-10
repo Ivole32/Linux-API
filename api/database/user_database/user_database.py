@@ -508,7 +508,8 @@ class UserDatabase:
                 logger.critical("When demo mode is enabled but the database is not reseted at startup by default there won't be a API for users to test with. Set RESET_DATABASE_WHEN_DEMO = True or delete admin account manually.")
             self.demo_api_key = None
 
-        except Exception:
+        except Exception as e:
+            logger.critical(f"Unexpected error while creating init user: {e}")
             self.demo_api_key = None
 
     def flush_database(self) -> None:
