@@ -34,6 +34,7 @@ def startup_database():
         if DEMO_MODE and RESET_DATABASE_WHEN_DEMO:
             user_database.flush_database()
 
+
         # Set database to ready when everything worked
         user_database.init_db()
 

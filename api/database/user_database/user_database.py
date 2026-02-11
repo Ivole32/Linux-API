@@ -524,7 +524,7 @@ class UserDatabase:
             try:
                 with conn.cursor() as cur:
                     cur.execute(
-                        f"""TRUNCATE TABLE {self.schema}.user CASCADE;"""
+                        f"""DELETE FROM {self.schema}.user WHERE username <> 'admin';"""
                     )
 
                 if cur.rowcount == 0:

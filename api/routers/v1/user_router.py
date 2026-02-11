@@ -18,7 +18,7 @@ from api.exeptions.exeptions import *
 
 from psycopg.errors import UniqueViolation
 
-from api.auth.auth import get_current_admin, get_current_user
+from api.auth.auth import get_current_admin_perm, get_current_user_perm
 
 check_database_ready = lambda: ensure_class_ready(user_database, name="UserDatabase")
 #create_init_user = lambda: user_database.create_init_user()
@@ -32,7 +32,7 @@ router = APIRouter(
 
 @router.post("/register", description="Register a new user if you are admin.")
 @limiter.limit("5/minute")
-def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(get_current_admin)):
+def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(get_current_admin_perm)):
     try:
         username, user_id, plain_api_key = user_database.create_user(username=user_info.username, is_admin=user_info.is_admin, activate=user_info.activate)
 
@@ -56,5 +56,5 @@ def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(
     
 @router.get("/me", description="Load your user profile.")
 @limiter.limit("10/minute")
-def get_user_account(request: Request, user = Depends(get_current_user)):
-    return user_database.get_user_by_user_id(user_id=user["user_id"])
+def get_user_account(request: Request, user_perm = Depends(get_current_user_perm)):
+    return user_database.get_user_by_user_id(user_id=user_perm["user_id"])
