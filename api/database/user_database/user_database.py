@@ -467,7 +467,7 @@ class UserDatabase:
                 with conn.cursor() as cur:
                     cur.execute(
                         f"""
-                        SELECT user_id FROM {self.schema}.auth
+                        SELECT user_id FROM {self.schema}.user_auth
                         WHERE api_key_hash = %s
                         LIMIT 1
                         """, (hashed_api_key,))
