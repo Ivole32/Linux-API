@@ -10,8 +10,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-ROOT_DIR = Path(__file__).resolve().parent.parent  # Go up to root directory
-load_dotenv(ROOT_DIR / ".env") # Load .env file
+# This aproach is not working anymore (idk why)
+#ROOT_DIR = Path(__file__).resolve().parent.parent  # Go up to root directory
+#load_dotenv(ROOT_DIR / ".env") # Load .env file
+load_dotenv()
 
 # Secrets
 API_KEY_SECRET = os.getenv("API_KEY_SECRET", None) # Use None if not set in .env to raise error later
@@ -46,7 +48,7 @@ POSTGRES_DATABSE = os.getenv("POSTGRES_DB", None)  # Use None if not set in .env
 POSGRES_MIN_CONNECTIONS = 1 # Minimum number of connections in the pool
 POSTGRES_MAX_CONNECTIONS = 5 # Maximum number of connections in the pool
 POSTGRES_CONNECT_TIMEOUT = 5.0 # Connection timeout for PostgreSQL (in seconds)
-POSTGRES_RETRIES = 3 # Number of retries for PostgreSQL connection
+POSTGRES_RETRIES = 1 # Number of retries for PostgreSQL connection
 POSTGRES_RETRY_DELAY = 2.0 # Delay between PostgreSQL connection retries (in seconds)
 POSTGRES_HEALTHCHECK_TIMEOUT = 15.0 # Timeout for PostgreSQL health checks (in seconds)
 
