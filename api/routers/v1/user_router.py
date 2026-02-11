@@ -53,3 +53,8 @@ def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(
 
     else:
         return {"username": username, "user_id": user_id, "api_key": plain_api_key}
+    
+@router.get("/me", description="Load your user profile.")
+@limiter.limit("10/minute")
+def get_user_account(request: Request, user = Depends(get_current_user)):
+    return user_database.get_user_by_user_id(user_id=user["user_id"])

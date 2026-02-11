@@ -8,7 +8,7 @@ user_database.create_init_user()
 def _get_current_user_from_api_key(
     x_api_key: str = Header(
         user_database.demo_api_key,
-        description="API key for authentication. Default is demo key if not provided."
+        description="API key for authentication."
     )
 ) -> dict:
     try:

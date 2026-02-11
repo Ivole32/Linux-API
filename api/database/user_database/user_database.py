@@ -228,7 +228,7 @@ class UserDatabase:
                 logger.error(f"Error getting user record: {e}")
                 raise UserRecordReadError(f"User record for user_id {user_id} could not be read")
 
-    def _get_user_perm_record(self, user_id: str = None, hashed_api_key: str = None) -> dict:
+    def _get_user_perm_record(self, user_id: str) -> dict:
         """
         Load the perm record for a user from the database.
 
@@ -249,13 +249,9 @@ class UserDatabase:
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         f"""
-                        SELECT up.*
-                        FROM {self.schema}.user_perm up
-                        JOIN {self.schema}.user_auth a ON up.user_id = a.user_id
-                        WHERE up.user_id = %s
-                            OR a.api_key_hash = %s
+                        SELECT * FROM {self.schema}.user_perm WHERE user_id = %s
                         """,
-                        (user_id, hashed_api_key)
+                        (user_id,)
                     )
 
                     user_perm = cur.fetchone()
@@ -472,7 +468,7 @@ class UserDatabase:
                     cur.execute(
                         f"""
                         SELECT user_id FROM {self.schema}.auth
-                        WHERE ai_key_hash = %s
+                        WHERE api_key_hash = %s
                         LIMIT 1
                         """, (hashed_api_key,))
                     
@@ -483,7 +479,7 @@ class UserDatabase:
                 logger.error(f"Error checking for api_key exostence: {e}")
                 raise APIKeyLookupError("Unexpected error while performing api_key lookup")
 
-    def get_user_perm_by_api_key(self, api_key: str) -> bool:
+    def get_user_perm_by_api_key(self, api_key: str) -> dict:
         if not api_key:
             raise APIKeyEmptyError("API Key is empty")
 
@@ -491,9 +487,19 @@ class UserDatabase:
         if not hashed_api_key:
             raise KeyHashError("No hashed API key was returned")
         
-        user = self._get_user_perm_record(hashed_api_key=hashed_api_key)
+        user_id = self._get_user_id_by_api_key(hashed_api_key=hashed_api_key)
+        if not user_id:
+            raise UserNotFoundError("User id by api key could not be loaded")
+
+        user = self._get_user_perm_record(user_id=user_id)
 
         return user
+
+    def get_user_by_user_id(self, user_id: str) -> dict:
+        user_record = self._get_user_record(user_id=user_id)
+        user_perm_record = self._get_user_perm_record(user_id=user_id)
+        
+        return {"user_id": user_id, "user": user_record, "user_perm": user_perm_record}
 
     def create_init_user(self) -> None:
         try:
