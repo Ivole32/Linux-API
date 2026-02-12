@@ -499,6 +499,10 @@ class UserDatabase:
         user_record = self._get_user_record(user_id=user_id)
         user_perm_record = self._get_user_perm_record(user_id=user_id)
         
+        # Remove unnecessary user_id from user recods
+        user_record.pop("user_id", None)
+        user_perm_record.pop("user_id", None)
+
         return {"user_id": user_id, "user": user_record, "user_perm": user_perm_record}
 
     def create_init_user(self) -> None:
