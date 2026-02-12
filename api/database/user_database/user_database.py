@@ -461,10 +461,10 @@ class UserDatabase:
         else:
             raise UserNotFoundError("Requested user not found")
 
-    def _get_user_id_by_api_key(self, hashed_api_key: str) -> bool:
+    def _get_user_id_by_api_key(self, hashed_api_key: str) -> str | bool:
         with postgres_pool.get_connection() as conn:
             try:
-                with conn.cursor() as cur:
+                with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         f"""
                         SELECT user_id FROM {self.schema}.user_auth
@@ -476,7 +476,7 @@ class UserDatabase:
                     return row[0] if row else None
             
             except Exception as e:
-                logger.error(f"Error checking for api_key exostence: {e}")
+                logger.error(f"Error checking for api_key existence: {e}")
                 raise APIKeyLookupError("Unexpected error while performing api_key lookup")
 
     def get_user_perm_by_api_key(self, api_key: str) -> dict:
