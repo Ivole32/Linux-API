@@ -4,3 +4,4 @@ venv
 *.egg-info
 .env
 .vscode
+.demo_key.txt
