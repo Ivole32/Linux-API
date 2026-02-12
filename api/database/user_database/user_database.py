@@ -473,7 +473,7 @@ class UserDatabase:
                         """, (hashed_api_key,))
                     
                     row = cur.fetchone()
-                    return row[0] if row else None
+                    return row["user_id"] if row else None
             
             except Exception as e:
                 logger.error(f"Error checking for api_key existence: {e}")
