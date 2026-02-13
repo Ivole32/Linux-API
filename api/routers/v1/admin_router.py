@@ -13,9 +13,6 @@ from api.database.user_database.user_database import user_database
 # Logging
 from api.logger.logger import logger
 
-# Models
-from api.models.user import UserListRequest
-
 # Auth
 from api.auth.auth import get_current_admin_perm
 
