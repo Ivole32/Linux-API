@@ -278,17 +278,17 @@ class UserDatabase:
         """
         with postgres_pool.get_connection() as conn:
             try:
-                with conn.cursor() as cur:
+                with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         """
-                        SELECT COUNT(*)
+                        SELECT COUNT(*) AS admin_count
                         FROM users.user_perm
                         WHERE is_admin = TRUE
                             AND activated = TRUE 
                         """
                     )
 
-                    return cur.fetchone()[0]
+                    return cur.fetchone()["admin_count"]
             
             except Exception as e:
                 logger.error(f"Error counting active admins: {e}")
