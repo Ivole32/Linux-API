@@ -468,7 +468,7 @@ class UserDatabase:
 
         with postgres_pool.get_connection() as conn:
             try:
-                with conn.cursor(row_factory=dict) as cur:
+                with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(f"""
                                 SELECT * FROM {self.schema}.user
                                 ORDER BY created_at DESC
@@ -478,8 +478,8 @@ class UserDatabase:
                     return cur.fetchall()
                 
             except Exception as e:
-                logger.error("Unexpected error while fetchning users")
-                raise Exception("Unexpected error while fetchning users")
+                logger.error("Unexpected error while fetching users")
+                raise Exception("Unexpected error while fetching users")
 
     def _get_user_id_by_api_key(self, hashed_api_key: str) -> str | bool:
         with postgres_pool.get_connection() as conn:
