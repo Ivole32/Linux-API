@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException
 # Rate limiting
 from api.limiter.limiter import limiter
 
-# Readiness check utitity
+# Readiness check utility
 from api.utils.check_class_readiness import ensure_class_ready
 
 # Database

@@ -463,6 +463,24 @@ class UserDatabase:
         else:
             raise UserNotFoundError("Requested user not found")
 
+    def list_users(self, page: int, limit: int):
+        offset = (page - 1) * limit
+
+        with postgres_pool.get_connection() as conn:
+            try:
+                with conn.cursor(row_factory=dict) as cur:
+                    cur.execute(f"""
+                                SELECT * FROM {self.schema}.user
+                                ORDER BY created_at DESC
+                                LIMIT %s OFFSET %s
+                                """, (limit, offset))
+
+                    return cur.fetchall()
+                
+            except Exception as e:
+                logger.error("Unexpected error while fetchning users")
+                raise Exception("Unexpected error while fetchning users")
+
     def _get_user_id_by_api_key(self, hashed_api_key: str) -> str | bool:
         with postgres_pool.get_connection() as conn:
             try:
