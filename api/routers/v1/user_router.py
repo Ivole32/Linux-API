@@ -11,7 +11,7 @@ from api.utils.check_class_readiness import ensure_class_ready
 from api.database.user_database.user_database import user_database
 
 # Models
-from api.models.user import UserRegisterRequest
+from api.models.user import UserRegisterRequest, UserDeleteRequest
 
 # Import exceptions
 from api.exeptions.exeptions import *
@@ -53,7 +53,30 @@ def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(
 
     else:
         return {"username": username, "user_id": user_id, "api_key": plain_api_key}
+
+@router.delete("/delete", description="Delete current user or other user (if you are admin).")
+@limiter.limit("5/minute")
+def delete_user_account(request: Request, user_info: UserDeleteRequest, user_perm = Depends(get_current_user_perm)):
+    try:
+        # User wants to delete himself => Normal user perms required
+        if user_info.user_id.lower() == "me" or user_info.user_id == user_perm["user_id"]:
+            user_database.delete_user(user_id=user_perm["user_id"])
+        
+        # User wants to delete other user => Admin user perms required
+        user_perm = get_current_admin_perm(request) # New auth request
+
+        # Deletion after auth request
+        user_database.delete_user(user_id=user_info.user_id)
+
+    except LastAdminError:
+        raise HTTPException(status_code=403, detail="Can not delete the last admin account.")
     
+    except UserNotFoundError:
+        raise HTTPException(status_code=404, detail="Requested user not found.")
+    
+    except Exception:
+        raise HTTPException(status_code=500, detail="Unexpected error while deleting user.")
+
 @router.get("/me", description="Load your user profile.")
 @limiter.limit("10/minute")
 def get_user_account(request: Request, user_perm = Depends(get_current_user_perm)):

@@ -11,3 +11,9 @@ class UserRegisterRequest(BaseModel):
     username: str = Field(..., min_length=USERNAME_MIN_LENGHT, max_length=USERNAME_MAX_LENGHT)
     is_admin: bool = Field(default=False)
     activate: bool = Field(default=False)
+
+class UserDeleteRequest(BaseModel):
+    """
+    Data model to delete users
+    """
+    user_id: str = Field(default="me", min_length=1) # Min lenght so it is actually required (idk.)
