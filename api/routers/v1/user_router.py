@@ -13,6 +13,9 @@ from api.database.user_database.user_database import user_database
 # Models
 from api.models.user import UserRegisterRequest, UserDeleteRequest
 
+# Logging
+from api.logger.logger import logger
+
 # Import exceptions
 from api.exeptions.exeptions import *
 
@@ -48,7 +51,8 @@ def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(
     except UniqueViolation:
         raise HTTPException(status_code=409, detail="This username is already taken")
 
-    except Exception:
+    except Exception as e:
+        logger.error(f"Unexpected error while creating user: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while creating user.")
 
     else:
@@ -66,7 +70,8 @@ def delete_user_account(request: Request, user_info: UserDeleteRequest, user_per
         user_perm = get_current_admin_perm(request) # New auth request
 
         # Deletion after auth request
-        user_database.delete_user(user_id=user_info.user_id)
+        if not user_database.delete_user(user_id=user_info.user_id):
+            raise UserDeletionError("User not deleted")
 
     except LastAdminError:
         raise HTTPException(status_code=403, detail="Can not delete the last admin account.")
@@ -74,7 +79,8 @@ def delete_user_account(request: Request, user_info: UserDeleteRequest, user_per
     except UserNotFoundError:
         raise HTTPException(status_code=404, detail="Requested user not found.")
     
-    except Exception:
+    except Exception as e:
+        logger.error(f"Unexpected error while deleting user: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while deleting user.")
 
 @router.get("/me", description="Load your user profile.")
