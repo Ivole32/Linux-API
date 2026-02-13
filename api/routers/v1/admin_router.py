@@ -1,5 +1,5 @@
 # FastAPI imports
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, Request, HTTPException, Query
 
 # Rate limiting
 from api.limiter.limiter import limiter
@@ -29,9 +29,9 @@ router = APIRouter(
 
 @router.get("/users", description="Get a full list of users.")
 @limiter.limit("10/minute")
-def list_users(request: Request, pagination: UserListRequest, _ = Depends(get_current_admin_perm)):
+def list_users(request: Request, page: int = Query(1, ge=1), limit: int = Query(50, ge=1, le=100), _ = Depends(get_current_admin_perm)):
     try:
-        return user_database.list_users(page=pagination.page, limit=pagination.limit)
+        return user_database.list_users(page=page, limit=limit)
     
     except Exception:
         raise HTTPException(status_code=500, detail="Unexpected error while fetching users")

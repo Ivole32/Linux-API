@@ -17,10 +17,3 @@ class UserDeleteRequest(BaseModel):
     Data model to delete users
     """
     user_id: str = Field(default="me", min_length=1) # Min lenght so it is actually required (idk.)
-
-class UserListRequest(BaseModel):
-    """
-    Data model to get a user list as admin
-    """
-    page: int = Field(default=1, description="The page you are on")
-    limit: int = Field(default=50, description="The limit of users to fetch")
