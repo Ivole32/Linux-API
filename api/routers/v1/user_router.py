@@ -70,7 +70,7 @@ def delete_user_account(request: Request, user_info: UserDeleteRequest, user_per
 
         # User wants to delete other user => Admin user perms required
         # Validate current user has admin permissions
-        get_current_admin_perm(request)
+        get_current_admin_perm(user_perm)
 
         # Deletion after admin validation
         if not user_database.delete_user(user_id=user_info.user_id):
