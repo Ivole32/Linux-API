@@ -455,8 +455,10 @@ class UserDatabase:
                 if user_perm["is_admin"]:
                     if self._get_admin_count() <= 1:
                         raise LastAdminError("Last active admin can not be deleted.")
-                else:
+                    # Admin is not the last admin -> allow deletion
                     return self._delete_user_record(user_id=user_id)
+                # Non-admin user -> allow deletion
+                return self._delete_user_record(user_id=user_id)
 
         else:
             raise UserNotFoundError("Requested user not found")

@@ -64,14 +64,18 @@ def delete_user_account(request: Request, user_info: UserDeleteRequest, user_per
     try:
         # User wants to delete himself => Normal user perms required
         if user_info.user_id.lower() == "me" or user_info.user_id == user_perm["user_id"]:
-            user_database.delete_user(user_id=user_perm["user_id"])
-        
-        # User wants to delete other user => Admin user perms required
-        user_perm = get_current_admin_perm(request) # New auth request
+            if not user_database.delete_user(user_id=user_perm["user_id"]):
+                raise UserDeletionError("User not deleted")
+            return {"detail": "User deleted"}
 
-        # Deletion after auth request
+        # User wants to delete other user => Admin user perms required
+        # Validate current user has admin permissions
+        get_current_admin_perm(request)
+
+        # Deletion after admin validation
         if not user_database.delete_user(user_id=user_info.user_id):
             raise UserDeletionError("User not deleted")
+        return {"detail": "User deleted"}
 
     except LastAdminError:
         raise HTTPException(status_code=403, detail="Can not delete the last admin account.")
