@@ -14,7 +14,7 @@ user_db, _ = get_user_database()
     description="A endpoint to delete a user. If you are an admin you can delete any user, as a normal user you can only delete your own account."
 )
 @limiter.limit("5/minute")
-def delete_user(request: Request, username: str, user_data = get_user_role("user")):
+async def delete_user(request: Request, username: str, user_data = get_user_role("user")):
     if username == "admin":
         raise HTTPException(status_code=403, detail="The admin account cannot be deleted.")
         

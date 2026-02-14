@@ -26,7 +26,7 @@ router = APIRouter(
 
 @router.get("/users", description="Get a full list of users.")
 @limiter.limit("10/minute")
-def list_users(request: Request, page: int = Query(1, ge=1), limit: int = Query(50, ge=1, le=100), _ = Depends(get_current_admin_perm)):
+async def list_users(request: Request, page: int = Query(1, ge=1), limit: int = Query(50, ge=1, le=100), _ = Depends(get_current_admin_perm)):
     try:
         return user_database.list_users(page=page, limit=limit)
     

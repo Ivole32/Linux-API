@@ -35,7 +35,7 @@ router = APIRouter(
 
 @router.post("/register", description="Register a new user if you are admin.")
 @limiter.limit("5/minute")
-def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(get_current_admin_perm)):
+async def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(get_current_admin_perm)):
     try:
         username, user_id, plain_api_key = user_database.create_user(username=user_info.username, is_admin=user_info.is_admin, activate=user_info.activate)
 
@@ -60,7 +60,7 @@ def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(
 
 @router.delete("/delete", description="Delete current user or other user (if you are admin).")
 @limiter.limit("5/minute")
-def delete_user_account(request: Request, user_info: UserDeleteRequest, user_perm = Depends(get_current_user_perm)):
+async def delete_user_account(request: Request, user_info: UserDeleteRequest, user_perm = Depends(get_current_user_perm)):
     try:
         # User wants to delete himself => Normal user perms required
         if user_info.user_id.lower() == "me" or user_info.user_id == user_perm["user_id"]:
@@ -89,7 +89,7 @@ def delete_user_account(request: Request, user_info: UserDeleteRequest, user_per
 
 @router.get("/me", description="Load your user profile.")
 @limiter.limit("10/minute")
-def get_user_account(request: Request, user_perm = Depends(get_current_user_perm)):
+async def get_user_account(request: Request, user_perm = Depends(get_current_user_perm)):
     try:
         return user_database.get_user_by_user_id(user_id=user_perm["user_id"])
     
