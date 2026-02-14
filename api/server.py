@@ -32,7 +32,11 @@ from api.middleware.legacy import add_legacy_middleware
 # Import CORS middleware
 from api.middleware.cors import setup_cors
 
-from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, LEGACY_API_PREFIX, API_DOCS_ENABLED, DEMO_MODE
+# Import HostTrust middleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+
+# Import config
+from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, LEGACY_API_PREFIX, API_DOCS_ENABLED, ALLOWED_HOSTS, DEMO_MODE
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -100,6 +104,15 @@ add_legacy_middleware(app)
 
 # Setup CORS middleware
 setup_cors(app)
+
+# Add Trusted Host Middleware
+# Need to add this manually
+# First try to fix Ref
+# Ref: https://github.com/pallets/werkzeug/issues/3063
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=ALLOWED_HOSTS
+)
 
 @app.get("/", include_in_schema=False)
 @limiter.limit("10/second")

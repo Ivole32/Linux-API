@@ -90,4 +90,9 @@ def delete_user_account(request: Request, user_info: UserDeleteRequest, user_per
 @router.get("/me", description="Load your user profile.")
 @limiter.limit("10/minute")
 def get_user_account(request: Request, user_perm = Depends(get_current_user_perm)):
-    return user_database.get_user_by_user_id(user_id=user_perm["user_id"])
+    try:
+        return user_database.get_user_by_user_id(user_id=user_perm["user_id"])
+    
+    except Exception as e:
+        logger.error(f"Unexpected error while loading your user's profile")
+        raise HTTPException(status_code=500, detail="Unexpected error while loading your profile.")

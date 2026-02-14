@@ -30,6 +30,8 @@ API_PREFIX = f"/api/{API_VERSION}" # Prefix for all API endpoints
 LEGACY_API_PREFIX = f"/api/legacy" # Prefix for old legacy routes
 API_DOCS_ENABLED = True # Enable or disable API documentation
 
+ALLOWED_HOSTS = ["*"]
+
 # Rate limiting configuration
 API_RATE_LIMIT_ENABLED = False # Enable or disable rate limiting
 API_DEFAULT_RATE_LIMITS = ["100/minute"] # Default rate limits
