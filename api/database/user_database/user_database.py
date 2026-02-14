@@ -210,7 +210,7 @@ class UserDatabase:
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         f"""
-                        SELECT * FROM users.user WHERE user_id = %s
+                        SELECT * FROM {self.schema}.user WHERE user_id = %s
                         """,
                         (user_id,)
                     )
@@ -280,9 +280,9 @@ class UserDatabase:
             try:
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
-                        """
+                        f"""
                         SELECT COUNT(*) AS admin_count
-                        FROM users.user_perm
+                        FROM {self.schema}.user_perm
                         WHERE is_admin = TRUE
                             AND activated = TRUE 
                         """
