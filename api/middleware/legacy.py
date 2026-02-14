@@ -19,7 +19,7 @@ def add_legacy_middleware(app):
             request_method = request.method
 
         except Exception as e:
-            raise JSONResponse(status_code=400, content={"detail": "Invalid request."})
+            return JSONResponse(status_code=400, content={"detail": "Invalid request."})
 
         if request_url.startswith(LEGACY_API_PREFIX) and request_method != "OPTIONS":
 
