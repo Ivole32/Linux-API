@@ -61,6 +61,9 @@ async def change_user_role(request: Request, user_id: UUID, is_admin: bool = Fal
     except NoRowsAffected:
         raise HTTPException(status_code=500, detail="No changes could be made: No rows affected")
 
+    except HTTPException:
+        raise
+
     except Exception as e:
         logger.error(f"Unexpected error while changing user role: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while changing user role.")
