@@ -111,6 +111,9 @@ async def deactivate_user(request: Request, user_id: UUID, user_perm = Depends(g
     except NoRowsAffected:
         raise HTTPException(status_code=500, detail="No changes could be made: No rows affected")
 
+    except HTTPException:
+        raise
+
     except Exception as e:
         logger.error(f"Unexpected error while deactivating user: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while deactivating user.")
