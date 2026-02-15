@@ -46,3 +46,4 @@ class UserPerm(Base):
 # - 29d2e30dee1b_added_immutable_column
 # - e6519d238a1b_added_immutable_user_functions
 # - c37fe0d02922_make_first_admin_immutable_by_default
+# - a2660751bd38_fix_for_non_immutable_user_deletion
