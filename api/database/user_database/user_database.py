@@ -47,7 +47,7 @@ class UserDatabase:
         # Set ready value if migration is not needed and database is up to date
         self._ready = not migration_needed()
 
-    def _is_immutable_error(self, e):
+    def _is_immutable_error(self, e) -> bool:
         return getattr(e, "sqlstate", None) == "P7501"
 
     def _generate_api_key(self) -> str:
@@ -562,7 +562,7 @@ class UserDatabase:
         else:
             raise UserNotFoundError("Requested user not found")
 
-    def list_users(self, page: int, limit: int):
+    def list_users(self, page: int, limit: int) -> dict:
         offset = (page - 1) * limit
 
         with postgres_pool.get_connection() as conn:

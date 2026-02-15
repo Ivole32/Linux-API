@@ -16,7 +16,7 @@ from api.logger.logger import logger
 # Auth
 from api.auth.auth import get_current_admin_perm
 
-#Import UUID
+# Import UUID
 from uuid import UUID
 
 # Exceptions
@@ -47,7 +47,8 @@ async def change_user_role(request: Request, user_id: UUID, is_admin: bool = Fal
         if user_id == user_perm["user_id"]:
             raise HTTPException(status_code=403, detail="Can't change your own admin perm.")
 
-        user_database.update_user_perm(user_id=user_id, is_admin=is_admin)
+        success = user_database.update_user_perm(user_id=user_id, is_admin=is_admin)
+        return {"success": success, "user_id": user_id, "is_admin": is_admin}
 
     except NoChangesNeeded:
         raise HTTPException(status_code=204, detail="No changes had to be made")

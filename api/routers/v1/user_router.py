@@ -38,7 +38,8 @@ router = APIRouter(
 async def register_user(request: Request, user_info: UserRegisterRequest, _ = Depends(get_current_admin_perm)):
     try:
         username, user_id, plain_api_key = user_database.create_user(username=user_info.username, is_admin=user_info.is_admin, activate=user_info.activate)
-
+        return {"username": username, "user_id": user_id, "api_key": plain_api_key}
+   
     except UserRecordCreationError:
         raise HTTPException(status_code=500, detail="User record could not be created")
     
@@ -54,9 +55,6 @@ async def register_user(request: Request, user_info: UserRegisterRequest, _ = De
     except Exception as e:
         logger.error(f"Unexpected error while creating user: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while creating user.")
-
-    else:
-        return {"username": username, "user_id": user_id, "api_key": plain_api_key}
 
 @router.delete("/delete", description="Delete current user or other user (if you are admin).")
 @limiter.limit("5/minute")
