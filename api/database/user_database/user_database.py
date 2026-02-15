@@ -171,11 +171,11 @@ class UserDatabase:
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         f"""
-                        INSERT INTO {self.schema}.user (username, immutable)
-                        VALUES (%s, %s)
+                        INSERT INTO {self.schema}.user (username)
+                        VALUES (%s)
                         RETURNING user_id;
                         """,
-                        (username, _immutable)
+                        (username,)
                     )
 
                     user_id = cur.fetchone()["user_id"]
@@ -406,6 +406,37 @@ class UserDatabase:
 
                     raise UserPermEditError("Unexpected error setting user perm record.")
 
+    def _make_user_immutable(self, user_id: str):
+        with postgres_pool.get_connection() as conn:
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        f"""
+                        UPDATE {self.schema}.user
+                        SET immutable = TRUE
+                        WHERE user_id = %s;
+                        """,
+                        (user_id,)
+                    )
+
+                    if cur.rowcount == 0:
+                        raise Exception("Error making user immutable: No rows affected")
+                        
+                    conn.commit()
+                    return True
+
+            except NoUserPermEditedError:
+                raise
+
+            except Exception as e:
+                conn.rollback()
+                if self._is_immutable_error(e):
+                    raise ImmutableException("Could not set immutable value: user is already immutable (???)")
+
+                logger.error(f"Error making user immutable: {e}")
+
+                raise UserImmutableChangeError("Unexpected error while making user immutable.")
+
     def create_user(self, username: str, is_admin: bool, activate: bool, _immutable: bool = False) -> tuple:
         """
         Create a complete user including base record, auth data and perminissions.
@@ -428,7 +459,7 @@ class UserDatabase:
         """
         sanitized_username = self._sanitize_username(username=username)
 
-        user_id = self._create_user_record(username=sanitized_username, _immutable=_immutable)
+        user_id = self._create_user_record(username=sanitized_username)
         if not user_id:
             raise UserRecordCreationError("No user_id returned in self._create_user_record")
         
@@ -439,6 +470,9 @@ class UserDatabase:
         perm_record_set = self._set_user_perm_record(user_id=user_id, is_admin=is_admin, activate=activate)
         if not perm_record_set:
             raise UserPermEditError("No success return from self._set_user_perm_record")
+
+        if _immutable:
+            self._make_user_immutable(user_id=user_id)
 
         return sanitized_username, user_id, api_key
 

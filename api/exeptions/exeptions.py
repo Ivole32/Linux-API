@@ -73,3 +73,7 @@ class NoChangesNeeded(Exception):
 class ImmutableException(Exception):
     """Raised when database column is immutable"""
     pass
+
+class UserImmutableChangeError(Exception):
+    """Raised when user could not be made immutable"""
+    pass
