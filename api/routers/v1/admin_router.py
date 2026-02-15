@@ -73,7 +73,8 @@ async def change_user_role(request: Request, user_id: UUID, is_admin: bool = Fal
 @limiter.limit("10/minute")
 async def activate_user(request: Request, user_id: UUID, _ = Depends(get_current_admin_perm)):
     try:
-        user_database.update_user_perm(user_id=user_id, activated=True)
+        success = user_database.update_user_perm(user_id=user_id, activated=True)
+        return {"success": success, "user_id": user_id}
 
     except NoChangesNeeded:
         raise HTTPException(status_code=204, detail="User already activated.")
@@ -98,7 +99,8 @@ async def deactivate_user(request: Request, user_id: UUID, user_perm = Depends(g
         if user_id == user_perm["user_id"]:
             raise HTTPException(status_code=403, detail="Can't deactivate own admin account.")
 
-        user_database.update_user_perm(user_id=user_id, activated=False)
+        success = user_database.update_user_perm(user_id=user_id, activated=False)
+        return {"success": success, "user_id": user_id}
 
     except NoChangesNeeded:
         raise HTTPException(status_code=204, detail="User already deactivated.")
