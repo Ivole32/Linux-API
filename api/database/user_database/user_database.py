@@ -428,7 +428,7 @@ class UserDatabase:
         """
         sanitized_username = self._sanitize_username(username=username)
 
-        user_id = self._create_user_record(username=sanitized_username)
+        user_id = self._create_user_record(username=sanitized_username, _immutable=_immutable)
         if not user_id:
             raise UserRecordCreationError("No user_id returned in self._create_user_record")
         
