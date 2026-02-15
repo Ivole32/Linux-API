@@ -26,13 +26,6 @@ def upgrade() -> None:
                existing_type=sa.VARCHAR(),
                nullable=False,
                schema='users')
-    
-    op.execute("""
-        UPDATE users.user
-        SET immutable = true
-        WHERE username = 'admin'
-    """)
-
     # ### end Alembic commands ###
 
 
