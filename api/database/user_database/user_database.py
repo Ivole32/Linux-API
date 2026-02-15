@@ -264,7 +264,7 @@ class UserDatabase:
                 if user_perm:
                     return user_perm
                 else:
-                    raise UserNotFoundError(f"User perm record for {"user_id " + user_id if user_id else "api_key_hash"} could not be loaded")
+                    raise UserNotFoundError(f"User perm record for {('user_id ' + str(user_id)) if user_id else 'api_key_hash'} could not be loaded")
 
             except UserNotFoundError:
                 raise
