@@ -42,8 +42,9 @@ class UserPerm(Base):
 # - f84c0e0cdb7e_fixed_error_with_user_child_creation_in_
 # - 37abce9a74cb_fixed_missing_relationships_table_
 
-# Immmutable users defined in:
+# Immmutable users/functions defined in:
 # - 29d2e30dee1b_added_immutable_column
 # - e6519d238a1b_added_immutable_user_functions
 # - c37fe0d02922_make_first_admin_immutable_by_default
 # - a2660751bd38_fix_for_non_immutable_user_deletion
+# - 5441ed5a5756_fix_for_database_error_when_loading_

@@ -511,7 +511,7 @@ class UserDatabase:
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor() as cur:
-                    cur.execute(cur.execute(query, values))
+                    cur.execute(query, values)
 
                     if cur.rowcount == 0:
                         raise NoRowsAffected("No rows where affected while updating user_perm")
