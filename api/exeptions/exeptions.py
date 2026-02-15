@@ -65,3 +65,11 @@ class APIKeyLookupError(Exception):
 class APIKeyEmptyError(Exception):
     """Raised when an empty API key is sen dto the server via a header value"""
     pass
+
+class NoChangesNeeded(Exception):
+    """Raised when a database operation would not change any data"""
+    pass
+
+class ImmutableException(Exception):
+    """Raised when database column is immutable"""
+    pass

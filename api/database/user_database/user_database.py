@@ -47,6 +47,9 @@ class UserDatabase:
         # Set ready value if migration is not needed and database is up to date
         self._ready = not migration_needed()
 
+    def _is_immutable_error(self, e):
+        return getattr(e, "sqlstate", None) == "P7501"
+
     def _generate_api_key(self) -> str:
         """
         Generate a secure random API key.
@@ -138,11 +141,14 @@ class UserDatabase:
                 raise
 
             except Exception as e:
-                logger.error(f"Error deleting account: {e}")
                 conn.rollback()
+                if self._is_immutable_error(e):
+                    raise ImmutableException("Could not delete user record: user is immutable")
+
+                logger.error(f"Error deleting account: {e}")
                 raise UserDeletionError("Unexpected error while deleting user.")
 
-    def _create_user_record(self, username: str) -> str:
+    def _create_user_record(self, username: str, _immutable: bool = False) -> str:
         """
         Create a new user record in the database and return its generated user_id
 
@@ -165,11 +171,11 @@ class UserDatabase:
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         f"""
-                        INSERT INTO {self.schema}.user (username)
-                        VALUES (%s)
+                        INSERT INTO {self.schema}.user (username, immutable)
+                        VALUES (%s, %s)
                         RETURNING user_id;
                         """,
-                        (username,)
+                        (username, _immutable)
                     )
 
                     user_id = cur.fetchone()["user_id"]
@@ -392,11 +398,15 @@ class UserDatabase:
                     raise
 
                 except Exception as e:
-                    logger.error(f"Error setting perm record: {e}")
                     conn.rollback()
+                    if self._is_immutable_error(e):
+                        raise ImmutableException("Could not set user perm record: user is immutable")
+
+                    logger.error(f"Error setting perm record: {e}")
+
                     raise UserPermEditError("Unexpected error setting user perm record.")
 
-    def create_user(self, username: str, is_admin: bool, activate: bool) -> tuple:
+    def create_user(self, username: str, is_admin: bool, activate: bool, _immutable: bool = False) -> tuple:
         """
         Create a complete user including base record, auth data and perminissions.
 
@@ -431,6 +441,61 @@ class UserDatabase:
             raise UserPermEditError("No success return from self._set_user_perm_record")
 
         return sanitized_username, user_id, api_key
+
+    def update_user_perm(self, user_id: str, is_admin: bool = None, activated: bool = None) -> bool:
+        user_perm = self._get_user_perm_record(user_id=user_id)
+        if not user_perm:
+            raise UserPermReadError("User perm was not returned.")
+        
+        if is_admin is None and activated is None:
+                raise NoChangesNeeded("No values provided to update user_perm")
+
+        updates = []
+        values = []
+
+        if is_admin is not None:
+            if is_admin != user_perm["is_admin"]:
+                updates.append("is_admin = %s")
+                values.append(is_admin)
+
+        if activated is not None:
+            if activated != user_perm["activated"]:
+                updates.append("activated = %s")
+                values.append(activated)
+
+        if not updates:
+            raise NoChangesNeeded("No changes would be made in user_perm.")
+        
+        values.append(user_id)
+
+        query = f"""
+            UPDATE {self.schema}.user_perm
+            SET {", ".join(updates)}
+            WHERE user_id = %s
+        """
+
+        with postgres_pool.get_connection() as conn:
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(cur.execute(query, values))
+
+                    if cur.rowcount == 0:
+                        raise NoRowsAffected("No rows where affected while updating user_perm")
+
+                conn.commit()
+
+            except NoRowsAffected:
+                conn.rollback()
+                raise
+
+            except Exception as e:
+                conn.rollback()
+                if self._is_immutable_error(e):
+                    raise ImmutableException("Could not update user_perm: user is immutable")
+
+                raise
+
+        return True
 
     def delete_user(self, user_id: str) -> bool:
         """
@@ -527,7 +592,7 @@ class UserDatabase:
 
     def create_init_user(self) -> None:
         try:
-            self.demo_api_key = self.create_user(username="admin", is_admin=True, activate=True)[2] # return API key
+            self.demo_api_key = self.create_user(username="admin", is_admin=True, activate=True, _immutable=True)[2] # return API key
             
             # Save API key for demo user if DEMO MODE is enabled
             if DEMO_MODE:
