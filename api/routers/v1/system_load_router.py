@@ -17,7 +17,7 @@ from api.logger.logger import logger
 from api.auth.auth import get_current_user_perm
 
 # Exceptions
-from api.exeptions.exeptions import NoAverageCpuLoad, NoAverageSystemLoad
+from api.exceptions.exceptions import NoAverageCpuLoad, NoAverageSystemLoad
 
 check_load_monitor_ready = lambda: ensure_class_ready(load_monitor, name="LoadMonitor")
 

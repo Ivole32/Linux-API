@@ -20,7 +20,7 @@ from api.auth.auth import get_current_admin_perm
 from uuid import UUID
 
 # Exceptions
-from api.exeptions.exeptions import *
+from api.exceptions.exceptions import *
 
 check_database_ready = lambda: ensure_class_ready(user_database, name="Userdatabase")
 

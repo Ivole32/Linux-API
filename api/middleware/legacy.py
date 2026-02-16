@@ -8,7 +8,7 @@ from api.config.config import LEGACY_API_PREFIX
 def add_legacy_middleware(app):
     @app.middleware("http")
     async def legacy_middleware(request: Request, call_next):
-        # I saw some error related to a issue I created some time ago (it got closed)
+        # I saw some error related to an issue I created some time ago (it got closed)
         # Second try to fix Ref
         # Ref: https://github.com/pallets/werkzeug/issues/3063
         # ZAP found it so here is a possible fix with try/except

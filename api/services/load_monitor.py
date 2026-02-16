@@ -2,7 +2,7 @@ import psutil
 from time import sleep
 from threading import Thread
 
-from api.exeptions.exeptions import NoAverageCpuLoad, NoAverageSystemLoad
+from api.exceptions.exceptions import NoAverageCpuLoad, NoAverageSystemLoad
 
 class LoadMonitor(Thread):
     def __init__(self):

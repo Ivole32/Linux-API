@@ -28,7 +28,7 @@ async def system_infos(request: Request, user_data = get_user_role("user")):
     system_info = get_system_infos()
     return system_info
 
-@router.get("/system-user", description="Returns informations about a specific user account on the server like UID, GID, shell and home dir.")
+@router.get("/system-user", description="Returns information about a specific user account on the server like UID, GID, shell and home dir.")
 @limiter.limit("5/minute")
 async def system_user_infos(request: Request, username: str, user_data = get_user_role("user")):
     return_code, user_info = get_system_user_infos(username)

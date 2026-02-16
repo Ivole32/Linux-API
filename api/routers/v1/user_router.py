@@ -17,7 +17,7 @@ from api.models.user import UserRegisterRequest, UserDeleteRequest
 from api.logger.logger import logger
 
 # Import exceptions
-from api.exeptions.exeptions import *
+from api.exceptions.exceptions import *
 
 from psycopg.errors import UniqueViolation
 

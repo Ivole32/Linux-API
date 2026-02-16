@@ -1,5 +1,4 @@
 import logging
-from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
@@ -41,8 +40,6 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, LEGACY_API_PREFIX, API_DOCS_ENABLED, ALLOWED_HOSTS, ENABLE_LEGACY_ROUTES, DEMO_MODE
 
 logger = logging.getLogger("uvicorn.error")
-
-load_dotenv(dotenv_path="config.env")
 
 app = FastAPI(
     title=API_TITLE,

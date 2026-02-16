@@ -45,19 +45,19 @@ async def get_processes(request: Request, _ = Depends(get_current_user_perm)):
     
     except Exception as e:
         logger.error(f"Unexpected error while listing system processes: {e}")
-        raise HTTPException(status_code=500, detail="Unexpected erro while loading system processes")
+        raise HTTPException(status_code=500, detail="Unexpected error while loading system processes")
     
-@router.get("/system-info", description="Get system infos")
+@router.get("/system-info", description="Get system info")
 @limiter.limit("10/minute")
 async def get_system_info(request: Request, _ = Depends(get_current_user_perm)):
     try:
         return get_system_infos()
     
     except Exception as e:
-        logger.error(f"Unexpected error while loading system infos: {e}")
-        raise HTTPException(status_code=500, detail="Unexpected error while loading system infos")
+        logger.error(f"Unexpected error while loading system info: {e}")
+        raise HTTPException(status_code=500, detail="Unexpected error while loading system info")
     
-@router.get("/system-user", description="Get infoormation about a system user")
+@router.get("/system-user", description="Get information about a system user")
 @limiter.limit("10/minute")
 async def get_system_user_info(request: Request, username: str, _ = Depends(get_current_user_perm)):
     try:

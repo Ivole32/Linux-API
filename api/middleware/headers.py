@@ -19,7 +19,7 @@ def add_header_middleware(app):
         response.headers["X-Content-Type-Options"] = "nosniff"
 
         if request.method == "OPTIONS":
-            # Allow browser to cache CORS preflight by letting middlewar/CORS handle it
+            # Allow browser to cache CORS preflight by letting middleware/CORS handle it
             pass
         else:
             # Prevent caching for all real API responses

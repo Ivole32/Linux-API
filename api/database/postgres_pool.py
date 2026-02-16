@@ -3,8 +3,7 @@
 This module provides a centralized connection pool for PostgreSQL using psycopg3.
 """
 
-# System and time utilities
-import sys
+# Time utilities
 import time
 
 # Typing
@@ -22,10 +21,10 @@ from logging import DEBUG, INFO, WARNING, CRITICAL
 from api.config.config import (
     POSTGRES_HOST,
     POSTGRES_PORT,
-    POSGRES_USER,
+    POSTGRES_USER,
     POSTGRES_PASSWORD,
-    POSTGRES_DATABSE,
-    POSGRES_MIN_CONNECTIONS,
+    POSTGRES_DATABASE,
+    POSTGRES_MIN_CONNECTIONS,
     POSTGRES_MAX_CONNECTIONS,
     POSTGRES_CONNECT_TIMEOUT,
     POSTGRES_RETRIES,
@@ -188,10 +187,10 @@ postgres_pool = PostgresPool()
 # Initialize the pool
 postgres_pool.init_pool(host=POSTGRES_HOST,
                         port=POSTGRES_PORT,
-                        user=POSGRES_USER,
+                        user=POSTGRES_USER,
                         password=POSTGRES_PASSWORD,
-                        database=POSTGRES_DATABSE,
-                        min_size=POSGRES_MIN_CONNECTIONS,
+                        database=POSTGRES_DATABASE,
+                        min_size=POSTGRES_MIN_CONNECTIONS,
                         max_size=POSTGRES_MAX_CONNECTIONS,
                         connect_timeout=POSTGRES_CONNECT_TIMEOUT,
                         retries=POSTGRES_RETRIES,

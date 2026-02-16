@@ -5,12 +5,9 @@ from dotenv import load_dotenv
 
 from api.config.config import ALEMBIC_INI_FILE
 
-from alembic.config import Config
 from alembic.script import ScriptDirectory
 from alembic.runtime.migration import MigrationContext
 from sqlalchemy import create_engine
-import os
-from dotenv import load_dotenv
 
 
 def migration_needed():
@@ -40,7 +37,7 @@ def migration_needed():
         context = MigrationContext.configure(connection)
         current_revision = context.get_current_revision()
 
-    # Id DB is not  at head -> migration needed
+    # If DB is not at head -> migration needed
     return current_revision != head_revision
 
 def run_alembic_upgrade_head():

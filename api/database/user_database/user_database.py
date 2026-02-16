@@ -26,7 +26,7 @@ from api.database.postgres_pool import postgres_pool
 
 from api.database.migrate import migration_needed
 
-from api.exeptions.exeptions import *
+from api.exceptions.exceptions import *
 
 class UserDatabase:
     """Class to handle user database operations."""
@@ -82,7 +82,7 @@ class UserDatabase:
         verify an API key against a previously stored HMAC-SHA256 hash.
 
         Args:
-            api_key: The plain API key provided by the cient
+            api_key: The plain API key provided by the client
             stored_hash: The stored hexadecimal HMAC hash to verify against.
 
         Returns:
@@ -114,8 +114,9 @@ class UserDatabase:
         Returns:
             True if the user record was successfully deleted
         
+
         Raises:
-            NoUserdeleted:
+            NoUserDeleted:
                 If no database row was affected (user_id not found).
 
             UserDeletionError:
@@ -162,9 +163,9 @@ class UserDatabase:
             NoDatabaseReturnError:
                 If no user_id is returned after the insert operation.
             UserRecordCreationError:     
-                If an unexpected dtabase error occuers.
+                If an unexpected database error occurs.
             UniqueViolation:
-                If an unique key is not unique
+                If a unique key is not unique
         """
         with postgres_pool.get_connection() as conn:
             try:
@@ -242,7 +243,7 @@ class UserDatabase:
             user_id: The unique identifier of the user whose perm record shuld be loaded.
 
         Returns:
-            A dictionary containing the user perminission filds and values.
+            A dictionary containing the user permission fields and values.
 
         Raises:
             UserNotFoundError:
@@ -351,7 +352,7 @@ class UserDatabase:
 
     def _set_user_perm_record(self, user_id: str, is_admin: bool, activate: bool) -> bool:
         """
-        Update the perminissin flags for a user in the user_perm table.
+        Update the permission flags for a user in the user_perm table.
         Note: Can currently only be used for account creation as updating is based on default values.
 
         Args:
@@ -360,7 +361,7 @@ class UserDatabase:
             activate: Whether the user account shouldbe marked as activated.
 
         Returns:
-            True if the perminissions are already at default values or were updated successfully in the database.
+            True if the permissions are already at default values or were updated successfully in the database.
 
         Raises:
             NoRowsAffected:
@@ -439,7 +440,7 @@ class UserDatabase:
 
     def create_user(self, username: str, is_admin: bool, activate: bool, _immutable: bool = False) -> tuple:
         """
-        Create a complete user including base record, auth data and perminissions.
+        Create a complete user including base record, auth data and permissions.
 
         Args:
             username: The requested username (will be sanitized before storage).
@@ -641,7 +642,7 @@ class UserDatabase:
 
         except UniqueViolation:
             if DEMO_MODE and not RESET_DATABASE_WHEN_DEMO:
-                logger.critical("When demo mode is enabled but the database is not reseted at startup by default there won't be a API for users to test with. Set RESET_DATABASE_WHEN_DEMO = True or delete admin account manually.")
+                logger.critical("When demo mode is enabled but the database is not reset at startup by default there won't be a API for users to test with. Set RESET_DATABASE_WHEN_DEMO = True or delete admin account manually.")
             if DEMO_MODE:
                 with open("../../../.demo_key.txt", "r") as key_file:
                     self.demo_api_key = key_file.read()

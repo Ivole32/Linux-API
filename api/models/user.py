@@ -4,13 +4,13 @@ API models for user related requests
 from pydantic import Field, field_validator
 from api.models.base import SecureBaseModel as BaseModel
 from uuid import UUID
-from api.config.config import USERNAME_MIN_LENGHT, USERNAME_MAX_LENGHT
+from api.config.config import USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH
 
 class UserRegisterRequest(BaseModel):
     """
     Data model to register users
     """
-    username: str = Field(..., min_length=USERNAME_MIN_LENGHT, max_length=USERNAME_MAX_LENGHT)
+    username: str = Field(..., min_length=USERNAME_MIN_LENGTH, max_length=USERNAME_MAX_LENGTH)
     is_admin: bool = Field(default=False)
     activate: bool = Field(default=False)
 

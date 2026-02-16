@@ -1,5 +1,5 @@
 class UserDeletionError(Exception):
-    """Raised when an error occured while deletion user."""
+    """Raised when an error occurred while deleting a user."""
     pass
 
 class UserCreationError(Exception):
@@ -15,7 +15,7 @@ class UserAuthCreationError(UserCreationError):
     pass
 
 class UserPermEditError(Exception):
-    """Raised when user perm record could not be set."""
+    """Raised when user permission record could not be set."""
     pass
 
 class UserRecordReadError(Exception):
@@ -23,7 +23,7 @@ class UserRecordReadError(Exception):
     pass
 
 class UserPermReadError(Exception):
-    """Raised when user perm could not be read."""
+    """Raised when user permission could not be read."""
     pass
 
 class DatabaseFlushError(Exception):
@@ -31,11 +31,11 @@ class DatabaseFlushError(Exception):
     pass
 
 class UserNotFoundError(Exception):
-    """Raised when an user is not found in the database."""
+    """Raised when a user is not found in the database."""
     pass
 
 class NoRowsAffected(Exception):
-    """Raised when no rows are affected in postsql query."""
+    """Raised when no rows are affected in a postgres query."""
     pass
 
 class NoUserDeleted(NoRowsAffected):
@@ -51,7 +51,7 @@ class NoUserPermEditedError(NoRowsAffected):
     pass
 
 class LastAdminError(Exception):
-    """Raised when attemping to remove the final active admin."""
+    """Raised when attempting to remove the final active admin."""
     pass
 
 class KeyHashError(Exception):
@@ -63,7 +63,7 @@ class APIKeyLookupError(Exception):
     pass
 
 class APIKeyEmptyError(Exception):
-    """Raised when an empty API key is sen dto the server via a header value"""
+    """Raised when an empty API key is sent to the server via a header value"""
     pass
 
 class NoChangesNeeded(Exception):
@@ -83,5 +83,5 @@ class NoAverageCpuLoad(Exception):
     pass
 
 class NoAverageSystemLoad(Exception):
-    """Raised when no average sstem load value is present in load_monitor"""
+    """Raised when no average system load value is present in load_monitor"""
     pass

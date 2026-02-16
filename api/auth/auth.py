@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends, Header
 from api.database.user_database.user_database import user_database
 
-from api.exeptions.exeptions import *
+from api.exceptions.exceptions import *
 
 user_database.create_init_user()
 
@@ -21,7 +21,7 @@ def _get_current_user_perm_from_api_key(
     except UserNotFoundError:
         raise HTTPException(status_code=401, detail="Unauthorized")
     except (Exception, UserPermReadError, KeyHashError):
-        raise HTTPException(status_code=500, detail="Unexpected error while authentificating user")
+        raise HTTPException(status_code=500, detail="Unexpected error while authenticating user")
 
 def get_current_admin_perm(user_perm=Depends(_get_current_user_perm_from_api_key)):
     """
