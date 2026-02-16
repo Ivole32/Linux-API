@@ -6,6 +6,11 @@ from .base import Base
 SCHEMA = "users"
 
 class User(Base):
+    """
+    ORM model for the primary `user` table.
+
+    Contains fields for username, creation time, last login and immutability flag.
+    """
     __tablename__ = "user"
     __table_args__ = {"schema": SCHEMA}
     user_id = Column(UUID(as_uuid=True), server_default=text("gen_random_uuid()"), primary_key=True)
@@ -15,6 +20,7 @@ class User(Base):
     immutable = Column(Boolean, nullable=False, server_default=text("false"))
 
 class UserAuth(Base):
+    """ORM model for storing API key hashes for users."""
     __tablename__ = "user_auth"
     __table_args__ = {"schema": SCHEMA}
     user_id = Column(
@@ -26,6 +32,7 @@ class UserAuth(Base):
     api_key_hash = Column(String, nullable=True, unique=True)
 
 class UserPerm(Base):
+    """ORM model for user permission flags (admin, activated)."""
     __tablename__ = "user_perm"
     __table_args__ = {"schema": SCHEMA}
     user_id = Column(

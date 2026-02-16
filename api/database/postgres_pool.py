@@ -39,6 +39,13 @@ class PostgresPool:
     _pool: Optional[ConnectionPool] = None
     
     def __new__(cls):
+        """
+        Create or return the singleton instance.
+
+        Ensures only a single `PostgresPool` instance exists within the
+        process. This implements a minimal singleton pattern used by the
+        module-level `postgres_pool` instance.
+        """
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance

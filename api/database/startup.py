@@ -19,6 +19,15 @@ database_url = os.getenv("DATABASE_URL")
 
 
 def startup_database():
+    """
+    Perform startup database checks and maintenance tasks.
+
+    Actions performed:
+    - Optionally create a backup
+    - Run pending alembic migrations if enabled
+    - Optionally flush demo database
+    - Initialize the application `user_database` readiness state
+    """
     needs_migration = migration_needed()
 
     # Backup database if database should be backuped at startup or a migration needs to be applied

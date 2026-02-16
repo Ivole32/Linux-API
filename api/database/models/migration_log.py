@@ -5,6 +5,12 @@ from .base import Base
 SCHEMA = "internal"
 
 class MigrationLog(Base):
+    """
+    ORM model representing an applied migration log entry.
+
+    Stores the revision, direction, status and optional info for each
+    migration operation recorded by Alembic.
+    """
     __tablename__ = "migration_log"
     __table_args__ = {"schema": SCHEMA}
 

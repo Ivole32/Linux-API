@@ -11,6 +11,16 @@ def _get_current_user_perm_from_api_key(
         description="API key for authentication."
     )
 ) -> dict:
+    """
+    Resolve a user's permission record from the X-API-Key header.
+
+    This dependency function is designed to be used with FastAPI's
+    `Depends`. It reads the API key from the request header, verifies
+    it against the user database and returns the permission record.
+
+    Raises HTTPException with appropriate status codes for empty,
+    missing or invalid API keys.
+    """
     try:
         user_perm = user_database.get_user_perm_by_api_key(x_api_key)
         if not user_perm:
