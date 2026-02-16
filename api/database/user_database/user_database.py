@@ -44,10 +44,32 @@ class UserDatabase:
         self.database_url = os.getenv("DATABASE_URL")
 
     def init_db(self) -> bool:
-        # Set ready value if migration is not needed and database is up to date
+        """
+        Initialize the readiness state for the user database.
+
+        This checks whether a migration is needed and sets the internal
+        `_ready` flag accordingly.
+
+        Returns:
+            bool: True if the database is up-to-date (no migration needed),
+            False otherwise.
+        """
         self._ready = not migration_needed()
+        return self._ready
 
     def _is_immutable_error(self, e) -> bool:
+        """
+        Detect whether a database exception represents an immutable-column error.
+
+        Checks the exception for a Postgres-specific SQLSTATE code used by
+        the application to signal attempts to modify immutable columns.
+
+        Args:
+            e: Exception instance returned by the DB driver.
+
+        Returns:
+            bool: True if the exception corresponds to the immutable error code.
+        """
         return getattr(e, "sqlstate", None) == "P7501"
 
     def _generate_api_key(self) -> str:
@@ -94,12 +116,16 @@ class UserDatabase:
         )
 
     def _sanitize_username(self, username: str) -> str:
-            """
-            Sanitize the username by stripping whitespace and removing invalid characters.
+            """Sanitize a username by removing invalid characters.
+
+            The function strips any characters that are not ASCII letters,
+            digits or underscore and converts the result to lowercase.
+
             Args:
-                username: The username to sanitize.
+                username: Raw username string provided by caller.
+
             Returns:
-                The sanitized username. (str)
+                str: Sanitized username safe for storage.
             """
             cleaned = re.sub(r"[^A-Za-z0-9_]", "", username) # Only allow alphanumeric characters and underscores
             return cleaned.lower() # Convert to lowercase for consistency
@@ -408,6 +434,20 @@ class UserDatabase:
                     raise UserPermEditError("Unexpected error setting user perm record.")
 
     def _make_user_immutable(self, user_id: str):
+        """
+        Mark a user record as immutable.
+
+        Sets the `immutable` flag for the provided `user_id`. If the
+        update affects no rows an exception is raised. This helper wraps
+        the database call and normalizes the exception types raised by
+        the caller.
+
+        Args:
+            user_id: The UUID (string) of the user to mark immutable.
+
+        Returns:
+            True on success.
+        """
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor() as cur:
@@ -478,6 +518,24 @@ class UserDatabase:
         return sanitized_username, user_id, api_key
 
     def update_user_perm(self, user_id: str, is_admin: bool = None, activated: bool = None) -> bool:
+        """
+        Update the permission flags for a user.
+
+        This function compares requested values to the current permission
+        record and issues an UPDATE only for fields that actually change.
+
+        Args:
+            user_id: The UUID (string) of the user to update.
+            is_admin: Optional boolean to set admin flag.
+            activated: Optional boolean to set activation flag.
+
+        Returns:
+            bool: True on successful update.
+
+        Raises:
+            NoChangesNeeded: If no values were provided or no changes are required.
+            UserPermReadError: If the user's permission record cannot be loaded.
+        """
         user_perm = self._get_user_perm_record(user_id=user_id)
         if not user_perm:
             raise UserPermReadError("User perm was not returned.")
@@ -564,6 +622,16 @@ class UserDatabase:
             raise UserNotFoundError("Requested user not found")
 
     def list_users(self, page: int, limit: int) -> dict:
+        """
+        Return a paginated list of user records.
+
+        Args:
+            page: 1-based page number.
+            limit: Maximum number of records per page.
+
+        Returns:
+            list[dict]: List of user records (each is a dict of columns).
+        """
         offset = (page - 1) * limit
 
         with postgres_pool.get_connection() as conn:
@@ -582,6 +650,18 @@ class UserDatabase:
                 raise Exception("Unexpected error while fetching users")
 
     def _get_user_id_by_api_key(self, hashed_api_key: str) -> str | bool:
+        """
+        Lookup the `user_id` for a given hashed API key.
+
+        Args:
+            hashed_api_key: Hexadecimal HMAC hash of the API key.
+
+        Returns:
+            str|None: user_id string if found, otherwise None.
+
+        Raises:
+            APIKeyLookupError: On unexpected errors during DB lookup.
+        """
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor(row_factory=dict_row) as cur:
@@ -600,6 +680,24 @@ class UserDatabase:
                 raise APIKeyLookupError("Unexpected error while performing api_key lookup")
 
     def get_user_perm_by_api_key(self, api_key: str) -> dict:
+        """
+        Resolve a user's permission record by their plain API key.
+
+        The method hashes the provided API key using the configured
+        `API_KEY_SECRET` and looks up the associated user permission
+        record in the database.
+
+        Args:
+            api_key: Plain API key string as provided by the client.
+
+        Returns:
+            dict: User permission record for the matched user.
+
+        Raises:
+            APIKeyEmptyError: If `api_key` is empty or falsy.
+            KeyHashError: If hashing fails.
+            UserNotFoundError: If no user matches the provided API key.
+        """
         if not api_key:
             raise APIKeyEmptyError("API Key is empty")
 
@@ -616,6 +714,19 @@ class UserDatabase:
         return user
 
     def get_user_by_user_id(self, user_id: str) -> dict:
+        """
+        Load full user and permission records by `user_id`.
+
+        Returns a combined dictionary containing `user_id`, the user
+        record (without the duplicated `user_id` field) and the
+        associated `user_perm` record.
+
+        Args:
+            user_id: The UUID (string) of the user to load.
+
+        Returns:
+            dict: {"user_id": <id>, "user": <user_record>, "user_perm": <perm_record>}
+        """
         user_record = self._get_user_record(user_id=user_id)
         user_perm_record = self._get_user_perm_record(user_id=user_id)
         
@@ -626,6 +737,13 @@ class UserDatabase:
         return {"user_id": user_id, "user": user_record, "user_perm": user_perm_record}
 
     def create_init_user(self) -> None:
+        """
+        Create an initial admin user used for demos or initial setup.
+
+        If `DEMO_MODE` is enabled the generated API key may be written
+        to a `.demo_key.txt` file for convenience. This function is
+        intended for development/demo usage only.
+        """
         try:
             self.demo_api_key = self.create_user(username="admin", is_admin=True, activate=True, _immutable=True)[2] # return API key
             
@@ -654,6 +772,13 @@ class UserDatabase:
             self.demo_api_key = None
 
     def flush_database(self) -> None:
+        """
+        Remove all non-admin users from the database.
+
+        This is a destructive operation used for resetting demo or
+        test environments. It deletes all user records except the
+        user with username 'admin'.
+        """
         with postgres_pool.get_connection() as conn:
             try:
                 with conn.cursor() as cur:
