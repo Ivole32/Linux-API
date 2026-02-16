@@ -577,7 +577,7 @@ class UserDatabase:
                     return cur.fetchall()
                 
             except Exception as e:
-                logger.error("Unexpected error while fetching users")
+                logger.error(f"Unexpected error while fetching users: {e}")
                 raise Exception("Unexpected error while fetching users")
 
     def _get_user_id_by_api_key(self, hashed_api_key: str) -> str | bool:

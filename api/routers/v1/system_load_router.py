@@ -23,7 +23,7 @@ check_load_monitor_ready = lambda: ensure_class_ready(load_monitor, name="LoadMo
 
 router = APIRouter(
     prefix="/system/load",
-    tags=["System"],
+    tags=["System", "Load"],
     dependencies=[Depends(check_load_monitor_ready)]
 )
 
@@ -47,7 +47,7 @@ async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
         raise HTTPException(status_code=500, detail="Could not load avg cpu load")
 
     except Exception as e:
-        logger.error("Unexpected error while getting average system and cpu loads")
+        logger.error(f"Unexpected error while getting average system and cpu loads: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
 @router.get("/cpu/average", description="Get average cpu load")
@@ -64,7 +64,7 @@ async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
         raise HTTPException(status_code=500, detail="Could not load avg cpu load")
 
     except Exception as e:
-        logger.error("Unexpected error while getting average cpu load")
+        logger.error(f"Unexpected error while getting average cpu load: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
 @router.get("/system/average", description="Get average system load")
@@ -81,7 +81,7 @@ async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
         raise HTTPException(status_code=500, detail="Could not load avg system load")
 
     except Exception as e:
-        logger.error("Unexpected error while getting average system load")
+        logger.error(f"Unexpected error while getting average system load: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
 
 @router.get("/values", description="Get system and cpu load values")
@@ -98,7 +98,7 @@ async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_pe
         }
 
     except Exception as e:
-        logger.error("Unexpected error while getting system and cpu load values")
+        logger.error(f"Unexpected error while getting system and cpu load values: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
 @router.get("/cpu/values", description="Get cpu load values")
@@ -112,7 +112,7 @@ async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_pe
         }
 
     except Exception as e:
-        logger.error("Unexpected error while getting cpu load values")
+        logger.error(f"Unexpected error while getting cpu load values: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
 @router.get("/system/values", description="Get system load values")
@@ -126,5 +126,5 @@ async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_pe
         }
 
     except Exception as e:
-        logger.error("Unexpected error while getting system load values")
+        logger.error(f"Unexpected error while getting system load values: {e}")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
