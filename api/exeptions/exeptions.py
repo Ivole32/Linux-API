@@ -77,3 +77,11 @@ class ImmutableException(Exception):
 class UserImmutableChangeError(Exception):
     """Raised when user could not be made immutable"""
     pass
+
+class NoAverageCpuLoad(Exception):
+    """Raised when no average CPU load value is present in load_monitor"""
+    pass
+
+class NoAverageSystemLoad(Exception):
+    """Raised when no average sstem load value is present in load_monitor"""
+    pass

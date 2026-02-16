@@ -2,12 +2,12 @@ from fastapi import APIRouter, Request, HTTPException
 
 from api.limiter.limiter import limiter
 from api.auth.legacy_auth import get_user_role
-from api.services.legacy_load_monitor import LoadMonitor
+from api.services.legacy_load_monitor import LegacyLoadMonitor
 from api.utils.get_system_infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
 
 router = APIRouter(prefix="/system")
 
-monitor = LoadMonitor()
+monitor = LegacyLoadMonitor()
 monitor.start()
 monitor.set_decimal_place_value(2)
 
