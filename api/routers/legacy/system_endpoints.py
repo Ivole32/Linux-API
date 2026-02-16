@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, HTTPException
 
 from api.limiter.limiter import limiter
 from api.auth.legacy_auth import get_user_role
-from api.services.load_monitor import LoadMonitor
+from api.services.legacy_load_monitor import LoadMonitor
 from api.utils.get_system_infos import get_system_infos, list_processes, get_system_uptime, get_system_user_infos
 
 router = APIRouter(prefix="/system")
