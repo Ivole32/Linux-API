@@ -79,7 +79,7 @@ async def delete_user_account(request: Request, user_info: UserDeleteRequest, us
         raise HTTPException(status_code=403, detail="Can not delete the last admin account.")
     
     except ImmutableException:
-        raise HTTPException(status_code=403, detail="Culd not delete user: user is immutable")
+        raise HTTPException(status_code=403, detail="Could not delete user: user is immutable")
 
     except UserNotFoundError:
         raise HTTPException(status_code=404, detail="Requested user not found.")
