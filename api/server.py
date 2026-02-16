@@ -38,7 +38,7 @@ from api.middleware.cors import setup_cors
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 # Import config
-from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, LEGACY_API_PREFIX, API_DOCS_ENABLED, ALLOWED_HOSTS, DEMO_MODE
+from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, LEGACY_API_PREFIX, API_DOCS_ENABLED, ALLOWED_HOSTS, ENABLE_LEGACY_ROUTES, DEMO_MODE
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -95,16 +95,17 @@ app.include_router(v1_system_info_router, prefix=API_PREFIX, tags=["v1"])
 # Include legacy routers
 # Old database system
 # => Other file, logic
-app.include_router(legacy_user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
-app.include_router(legacy_admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
-app.include_router(legacy_system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
-app.include_router(legacy_mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+if ENABLE_LEGACY_ROUTES:
+    app.include_router(legacy_user_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+    app.include_router(legacy_admin_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+    app.include_router(legacy_system_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+    app.include_router(legacy_mixed_router, prefix=LEGACY_API_PREFIX, tags=["Legacy"], deprecated=True)
+
+    # Add custom legacy middleware
+    add_legacy_middleware(app)
 
 # Add custom headers middleware
 add_header_middleware(app)
-
-# Add custom legacy middleware
-add_legacy_middleware(app)
 
 # Setup CORS middleware
 setup_cors(app)

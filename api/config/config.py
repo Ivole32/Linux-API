@@ -18,6 +18,8 @@ load_dotenv()
 # Secrets
 API_KEY_SECRET = os.getenv("API_KEY_SECRET", None) # Use None if not set in .env to raise error later
 
+ENABLE_LEGACY_ROUTES = True
+
 # Demo Mode
 DEMO_MODE = True
 RESET_DATABASE_WHEN_DEMO = True
