@@ -22,12 +22,12 @@ from api.exeptions.exeptions import NoAverageCpuLoad, NoAverageSystemLoad
 check_load_monitor_ready = lambda: ensure_class_ready(load_monitor, name="LoadMonitor")
 
 router = APIRouter(
-    prefix="/system",
+    prefix="/system/load",
     tags=["System"],
     dependencies=[Depends(check_load_monitor_ready)]
 )
 
-@router.get("/load/average", description="Get average system and cpu load")
+@router.get("/average", description="Get average system and cpu load")
 @limiter.limit("10/minute")
 async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
     try:
@@ -50,7 +50,7 @@ async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
         logger.error("Unexpected error while getting average system and cpu loads")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
-@router.get("/load/cpu/average", description="Get average cpu load")
+@router.get("/cpu/average", description="Get average cpu load")
 @limiter.limit("10/minute")
 async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
     try:
@@ -67,7 +67,7 @@ async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
         logger.error("Unexpected error while getting average cpu load")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
-@router.get("/load/system/average", description="Get average system load")
+@router.get("/system/average", description="Get average system load")
 @limiter.limit("10/minute")
 async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
     try:
@@ -84,7 +84,7 @@ async def avg_load(request: Request, _ = Depends(get_current_user_perm)):
         logger.error("Unexpected error while getting average system load")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
 
-@router.get("/load/values", description="Get system and cpu load values")
+@router.get("/values", description="Get system and cpu load values")
 @limiter.limit("10/minute")
 async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_perm)):
     try:
@@ -101,7 +101,7 @@ async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_pe
         logger.error("Unexpected error while getting system and cpu load values")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
-@router.get("/load/cpu/values", description="Get cpu load values")
+@router.get("/cpu/values", description="Get cpu load values")
 @limiter.limit("10/minute")
 async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_perm)):
     try:
@@ -115,7 +115,7 @@ async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_pe
         logger.error("Unexpected error while getting cpu load values")
         raise HTTPException(status_code=500, detail="Unexpected error while loading/returning values")
     
-@router.get("/load/system/values", description="Get system load values")
+@router.get("/system/values", description="Get system load values")
 @limiter.limit("10/minute")
 async def avg_load(request: Request, n: int = 5, _ = Depends(get_current_user_perm)):
     try:

@@ -16,7 +16,7 @@ from api.routers.legacy.mixed_endpoints import router as legacy_mixed_router
 # => New database system, ...
 from api.routers.v1.user_router import router as v1_user_router
 from api.routers.v1.admin_router import router as v1_admin_router
-from api.routers.v1.system_router import router as v1_system_router
+from api.routers.v1.system_load_router import router as v1_system_load_router
 
 # Import rate limiter
 from api.limiter.limiter import limiter
@@ -88,7 +88,7 @@ async def internal_exception_handler(request: Request, exc: Exception):
 # Include v1 routers
 app.include_router(v1_user_router, prefix=API_PREFIX, tags=["v1"])
 app.include_router(v1_admin_router, prefix=API_PREFIX, tags=["v1"])
-app.include_router(v1_system_router, prefix=API_PREFIX, tags=["v1"])
+app.include_router(v1_system_load_router, prefix=API_PREFIX, tags=["v1"])
 
 # Include legacy routers
 # Old database system
