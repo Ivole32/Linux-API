@@ -1,6 +1,5 @@
 from sqlalchemy import Column, String, DateTime, func, Boolean, ForeignKey, text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 from .base import Base
 
 SCHEMA = "users"
