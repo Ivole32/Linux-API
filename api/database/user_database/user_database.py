@@ -38,11 +38,6 @@ class UserDatabase:
 
         self.demo_api_key = None
 
-        from dotenv import load_dotenv
-        load_dotenv() # Load .env
-
-        self.database_url = os.getenv("DATABASE_URL")
-
     def init_db(self) -> bool:
         """
         Initialize the readiness state for the user database.
