@@ -142,7 +142,7 @@ class MetricDatabase:
 
         query = f"""
             SELECT
-                time_bucket,
+                time,
                 route,
                 status_code,
                 count
@@ -161,15 +161,15 @@ class MetricDatabase:
             params.append(status_code)
 
         if start_time:
-            query += " AND time_bucket >= %s"
+            query += " AND time >= %s"
             params.append(start_time)
 
         if end_time:
-            query += " AND time_bucket <= %s"
+            query += " AND time <= %s"
             params.append(end_time)
 
         order = "DESC" if newest_first else "ASC"
-        query += f" ORDER BY time_bucket {order}"
+        query += f" ORDER BY time {order}"
 
         query += " LIMIT %s OFFSET %s"
         params.extend([limit, offset])
@@ -231,7 +231,7 @@ class MetricDatabase:
 
         query = f"""
             SELECT
-                time_bucket,
+                time,
                 total_requests,
                 avg_response_time,
                 error_rate
@@ -242,15 +242,15 @@ class MetricDatabase:
         params = []
 
         if start_time:
-            query += " AND time_bucket >= %s"
+            query += " AND time >= %s"
             params.append(start_time)
 
         if end_time:
-            query += " AND time_bucket <= %s"
+            query += " AND time <= %s"
             params.append(end_time)
 
         order = "DESC" if newest_first else "ASC"
-        query += f" ORDER BY time_bucket {order}"
+        query += f" ORDER BY time {order}"
 
         query += " LIMIT %s OFFSET %s"
         params.extend([limit, offset])
