@@ -1,4 +1,6 @@
 import logging
+import asyncio
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
@@ -17,6 +19,8 @@ from api.routers.v1.user_router import router as v1_user_router
 from api.routers.v1.admin_router import router as v1_admin_router
 from api.routers.v1.system_load_router import router as v1_system_load_router
 from api.routers.v1.system_info_router import router as v1_system_info_router
+from api.routers.v1.metrics_router import router as v1_metric_router
+from api.routers.v1.health_router import router as v1_health_router
 
 # Import rate limiter
 from api.limiter.limiter import limiter
@@ -33,13 +37,26 @@ from api.middleware.legacy import add_legacy_middleware
 # Import CORS middleware
 from api.middleware.cors import setup_cors
 
+# Import metrics middleware
+from api.middleware.metrics import add_metrics_middleware
+
 # Import HostTrust middleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+
+# Import metric flush worker
+from api.metrics.flush_worker import flush_loop
 
 # Import config
 from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFIX, LEGACY_API_PREFIX, API_DOCS_ENABLED, ALLOWED_HOSTS, ENABLE_LEGACY_ROUTES, DEMO_MODE
 
 logger = logging.getLogger("uvicorn.error")
+
+# Flush worker for API metrics
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = asyncio.create_task(flush_loop())
+    yield
+    task.cancel()
 
 app = FastAPI(
     title=API_TITLE,
@@ -55,7 +72,8 @@ app = FastAPI(
     docs_url="/docs" if API_DOCS_ENABLED else None,
     openapi_url="/openapi.json" if API_DOCS_ENABLED else None,
     redoc_url=None, # I don't like redocs so enable if you want to...
-    on_startup=[startup_database]
+    on_startup=[startup_database],
+    lifespan=lifespan,
 )
 
 app.state.limiter = limiter
@@ -75,6 +93,10 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
+# Add metric middleware
+add_metrics_middleware(app) # Add middleware here 
+                            #=> needs to be first because only then it can detect everything
+
 @app.exception_handler(Exception)
 async def internal_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled error: {exc}")
@@ -88,6 +110,8 @@ app.include_router(v1_user_router, prefix=API_PREFIX, tags=["v1"])
 app.include_router(v1_admin_router, prefix=API_PREFIX, tags=["v1"])
 app.include_router(v1_system_load_router, prefix=API_PREFIX, tags=["v1"])
 app.include_router(v1_system_info_router, prefix=API_PREFIX, tags=["v1"])
+app.include_router(v1_metric_router, prefix=API_PREFIX, tags=["v1"])
+app.include_router(v1_health_router, prefix=API_PREFIX, tags=["v1"])
 
 # Include legacy routers
 # Old database system

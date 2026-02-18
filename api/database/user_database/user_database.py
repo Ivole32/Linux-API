@@ -19,6 +19,7 @@ import hmac
 # Import configuration constants
 from api.config.config import API_KEY_SECRET, DEMO_MODE, RESET_DATABASE_WHEN_DEMO
 
+# Import logger
 from api.logger.logger import logger
 
 # Import PostgreSQL connection pool
