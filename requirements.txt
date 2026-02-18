@@ -1,14 +1,14 @@
 #Requirements
-fastapi>=0.128.0
-uvicorn>=0.40.0
+fastapi>=0.129.0
+uvicorn>=0.41.0
 slowapi>=0.1.9
 pydantic>=2.12.5
 psutil>=7.2.2
 python-dotenv>=1.2.1
-alembic>=1.18.3
+alembic>=1.18.4
 sqlalchemy>=2.0.46
 psycopg>=3.3.2
-psycopg-pool>=1.2
+psycopg-pool>=3.3.0
 psycopg2-binary>=2.9.11
 
 # Pinned by snyk to fix https://security.snyk.io/vuln/SNYK-PYTHON-ZIPP-7430899
