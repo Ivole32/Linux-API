@@ -65,7 +65,7 @@ async def lifespan(app: FastAPI):
     """
 
     # Initialize database
-    await startup_database()
+    startup_database()
 
     # Start background metrics flush worker
     flush_task = asyncio.create_task(flush_loop())
