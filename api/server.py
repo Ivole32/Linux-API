@@ -51,12 +51,36 @@ from api.config.config import API_TITLE, API_DESCRIPTION, API_VERSION, API_PREFI
 
 logger = logging.getLogger("uvicorn.error")
 
-# Flush worker for API metrics
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    task = asyncio.create_task(flush_loop())
-    yield
-    task.cancel()
+    """
+    Application lifespan context.
+
+    Startup:
+        - Initialize database
+        - Start background flush worker
+
+    Shutdown:
+        - Cancel background worker gracefully
+    """
+
+    # Initialize database
+    await startup_database()
+
+    # Start background metrics flush worker
+    flush_task = asyncio.create_task(flush_loop())
+    app.state.flush_task = flush_task
+
+    try:
+        yield
+
+    finally:
+        flush_task.cancel()
+
+        try:
+            await flush_task
+        except asyncio.CancelledError:
+            pass
 
 app = FastAPI(
     title=API_TITLE,
