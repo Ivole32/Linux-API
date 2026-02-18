@@ -10,6 +10,7 @@ from api.database.backup import backup_database
 from api.database.migrate import migration_needed, run_alembic_upgrade_head
 
 from api.database.user_database.user_database import user_database
+from api.database.metric_database.metric_database import metric_database
 
 import os
 from dotenv import load_dotenv
@@ -44,8 +45,11 @@ def startup_database():
             user_database.flush_database()
 
 
-        # Set database to ready when everything worked
+        # Set user database to ready when everything worked
         user_database.init_db()
+
+        # Set metric database to ready when everything worked
+        metric_database.init_db()
 
     except Exception:
         pass
