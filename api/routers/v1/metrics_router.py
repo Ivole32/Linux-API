@@ -34,7 +34,7 @@ router = APIRouter(
 
 @router.get("/global")
 @limiter.limit("10/minute")
-async def global_metrics(request: Request, params: GlobalMetricRequest, _ = Depends(get_current_admin_perm)):
+async def global_metrics(request: Request, params: GlobalMetricRequest = Depends(), _ = Depends(get_current_admin_perm)):
     try:
         return metric_database.get_global_metrics(start_time=params.start_time,
                                                   end_time=params.end_time,
@@ -49,7 +49,7 @@ async def global_metrics(request: Request, params: GlobalMetricRequest, _ = Depe
 
 @router.get("/routes")
 @limiter.limit("10/minute")
-async def route_metrics(request: Request, params: RouteMetricsRequest, _ = Depends(get_current_admin_perm)):
+async def route_metrics(request: Request, params: RouteMetricsRequest = Depends(), _ = Depends(get_current_admin_perm)):
     try:
         return metric_database.get_route_metrics(route=params.route,
                                                  start=params.start,
@@ -63,7 +63,7 @@ async def route_metrics(request: Request, params: RouteMetricsRequest, _ = Depen
     
 @router.get("/status-codes")
 @limiter.limit("10/minute")
-async def status_code_metrics(request: Request, params: RouteStatusCodeMetricsRerquest, _ = Depends(get_current_admin_perm)):
+async def status_code_metrics(request: Request, params: RouteStatusCodeMetricsRerquest = Depends(), _ = Depends(get_current_admin_perm)):
     try:
         return metric_database.get_route_status_code_metrics(route=params.route,
                                                              status_code=params.status_code,
