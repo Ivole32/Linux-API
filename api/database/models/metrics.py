@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Integer, Float, text
+from sqlalchemy import Column, String, DateTime, Integer, Float, LargeBinary, text
 from .base import Base
 
 SCHEMA = "metrics"
@@ -15,6 +15,7 @@ class RouteMetrics(Base):
     p50 = Column(Float)
     p95 = Column(Float)
     p99 = Column(Float)
+    tdigest = Column(LargeBinary)
 
 class RouteStatusCodes(Base):
     __tablename__ = "route_status_codes"
