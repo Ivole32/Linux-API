@@ -55,6 +55,7 @@ POSTGRES_CONNECT_TIMEOUT = 5.0 # Connection timeout for PostgreSQL (in seconds)
 POSTGRES_RETRIES = 1 # Number of retries for PostgreSQL connection
 POSTGRES_RETRY_DELAY = 2.0 # Delay between PostgreSQL connection retries (in seconds)
 POSTGRES_HEALTHCHECK_TIMEOUT = 15.0 # Timeout for PostgreSQL health checks (in seconds)
+POSTGRES_HEALTHCHECK_INTERVALL = 5.0 # Intervall time for PostgreSQL healthcheck (in seconds)
 
 # CORS configuration
 CORS_ALLOWED_ORIGINS = ["*"] # Allow all origins for now, can be adjusted later

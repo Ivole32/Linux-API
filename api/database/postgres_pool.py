@@ -5,6 +5,7 @@ This module provides a centralized connection pool for PostgreSQL using psycopg3
 
 # Time utilities
 import time
+import threading
 
 # Typing
 from typing import Optional
@@ -30,6 +31,7 @@ from api.config.config import (
     POSTGRES_RETRIES,
     POSTGRES_RETRY_DELAY,
     POSTGRES_HEALTHCHECK_TIMEOUT,
+    POSTGRES_HEALTHCHECK_INTERVALL
 )
 
 class PostgresPool:
@@ -55,6 +57,10 @@ class PostgresPool:
         if self._pool is not None:
             return
         log(DEBUG, "PostgresPool instance created (not yet initialized)")
+        self._is_ready: bool = False
+        self._monitor_thread: Optional["threading.Thread"] = None
+        self._monitor_stop = False
+        self._lock = threading.Lock()
     
     def init_pool(
         self,
@@ -69,6 +75,7 @@ class PostgresPool:
         retries: int = 1,
         retry_delay: float = 1.0,
         healthcheck_timeout: float | None = None,
+        healthcheck_interval: float = 5.0,
     ) -> bool:
         """Initialize the connection pool with database credentials.
         
@@ -114,6 +121,11 @@ class PostgresPool:
                     self._pool.wait(timeout=healthcheck_timeout)
                 self._run_healthcheck()
 
+                # start background monitor thread that periodically checks readiness
+                # if not already started
+                if self._monitor_thread is None:
+                    self._start_monitor(healthcheck_interval)
+
                 log(
                     INFO,
                     f"PostgreSQL connection pool initialized: {database}@{host}:{port} "
@@ -147,6 +159,32 @@ class PostgresPool:
             raise RuntimeError("Connection pool not initialized. Call init_pool() first.")
         return self._pool.connection()
 
+    def is_ready(self) -> bool:
+        """Return whether the pool currently reports the database as ready."""
+        with self._lock:
+            return bool(self._is_ready)
+
+    def _start_monitor(self, interval: float = 5.0) -> None:
+        """Start a background thread that periodically runs a healthcheck and sets `self._is_ready`."""
+        if self._monitor_thread is not None:
+            return
+
+        def _monitor_loop():
+            while not self._monitor_stop:
+                try:
+                    self._run_healthcheck()
+                    with self._lock:
+                        self._is_ready = True
+                except Exception:
+                    with self._lock:
+                        self._is_ready = False
+                time.sleep(max(0.5, float(interval)))
+
+        self._monitor_stop = False
+        t = threading.Thread(target=_monitor_loop, daemon=True, name="pg-pool-monitor")
+        self._monitor_thread = t
+        t.start()
+
     def ensure_ready(self, timeout: float | None = None) -> None:
         """
         Verify the pool can hand out healthy connections.
@@ -170,6 +208,10 @@ class PostgresPool:
         if self._pool is not None:
             self._pool.close()
             self._pool = None
+        # stop monitor thread
+        if self._monitor_thread is not None:
+            self._monitor_stop = True
+            self._monitor_thread = None
             if not silent:
                 log(INFO, "PostgreSQL connection pool closed")
 
@@ -202,5 +244,6 @@ postgres_pool.init_pool(host=POSTGRES_HOST,
                         connect_timeout=POSTGRES_CONNECT_TIMEOUT,
                         retries=POSTGRES_RETRIES,
                         retry_delay=POSTGRES_RETRY_DELAY,
-                        healthcheck_timeout=POSTGRES_HEALTHCHECK_TIMEOUT
+                        healthcheck_timeout=POSTGRES_HEALTHCHECK_TIMEOUT,
+                        healthcheck_interval=POSTGRES_HEALTHCHECK_INTERVALL
                         )

@@ -806,7 +806,7 @@ class UserDatabase:
         Returns:
             True if the database is ready, False otherwise.
         """
-        return self._ready
+        return self._ready and postgres_pool.is_ready()
     
 # Global singleton instance
 user_database = UserDatabase()
