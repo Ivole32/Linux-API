@@ -9,9 +9,9 @@ services:
     #    required: true
 
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
 
     ports:
       - "${POSTGRES_PORT}:5432"
@@ -31,6 +31,42 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  pgpool:
+    image: pgpool/pgpool:latest
+    container_name: linux_api-pgpool
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    ports:
+      - "${PGPOOL_PORT}:5432"
+
+    environment:
+      - PGPOOL_PARAMS_BACKEND_HOSTNAME0=postgres
+      - PGPOOL_PARAMS_BACKEND_PORT0=5432
+      - PGPOOL_PARAMS_BACKEND_WEIGHT0=1
+      - PGPOOL_PARAMS_BACKEND_DATA_DIRECTORY0=/var/lib/postgresql/data
+      - PGPOOL_PARAMS_BACKEND_FLAG0=ALLOW_TO_FAILOVER
+
+      - PGPOOL_POSTGRES_USERNAME=${POSTGRES_USER}
+      - PGPOOL_POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+      - PGPOOL_PARAMS_SR_CHECK_USER=${POSTGRES_USER}
+      - PGPOOL_PARAMS_SR_CHECK_PASSWORD=${POSTGRES_PASSWORD}
+      - PGPOOL_PARAMS_HEALTH_CHECK_USER=${POSTGRES_USER}
+      - PGPOOL_PARAMS_HEALTH_CHECK_PASSWORD=${POSTGRES_PASSWORD}
+
+      - PGPOOL_ADMIN_USERNAME=${PGPOOL_ADMIN_USER}
+      - PGPOOL_ADMIN_PASSWORD=${PGPOOL_ADMIN_PASSWORD}
+
+      - PGPOOL_PARAMS_ENABLE_POOL_HBA=off
+      - PGPOOL_PARAMS_ENABLE_QUERY_CACHE=on
+      - PGPOOL_ENABLE_LOAD_BALANCING=yes
+      - PGPOOL_ENABLE_QUERY_CACHE=yes
+      - PGPOOL_NUM_INIT_CHILDREN=100
+      - PGPOOL_MAX_POOL=5
 
 volumes:
   postgres_data:
