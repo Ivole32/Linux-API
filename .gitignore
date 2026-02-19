@@ -2,3 +2,8 @@ __pycache__/
 *.db
 venv
 *.egg-info
+.env
+.vscode
+.demo_key.txt
+testing.py
+command_notes.txt
