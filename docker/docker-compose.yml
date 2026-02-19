@@ -3,15 +3,12 @@ services:
     image: timescale/timescaledb:latest-pg18
     container_name: linux_api-postgres
     restart: unless-stopped
-
-    #env_file: 
-    #  - path: ../.env
-    #    required: true
+    env_file: ../.env
 
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
     ports:
       - "${POSTGRES_PORT}:5432"
@@ -27,10 +24,11 @@ services:
       -c shared_buffers=256MB
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+
 
   pgpool:
     image: pgpool/pgpool:latest
@@ -39,38 +37,44 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file: ../.env
 
     ports:
       - "${PGPOOL_PORT}:9999"
 
     environment:
-      - PGPOOL_PARAMS_BACKEND_HOSTNAME0=postgres
-      - PGPOOL_PARAMS_BACKEND_PORT0=5432
-      - PGPOOL_PARAMS_BACKEND_WEIGHT0=1
-      - PGPOOL_PARAMS_BACKEND_DATA_DIRECTORY0=/var/lib/postgresql/data
-      - PGPOOL_PARAMS_BACKEND_FLAG0=ALLOW_TO_FAILOVER
+      # Backend definition
+      PGPOOL_PARAMS_BACKEND_HOSTNAME0: postgres
+      PGPOOL_PARAMS_BACKEND_PORT0: 5432
+      PGPOOL_PARAMS_BACKEND_WEIGHT0: 1
+      PGPOOL_PARAMS_BACKEND_FLAG0: ALLOW_TO_FAILOVER
 
-      - PGPOOL_POSTGRES_USERNAME=${POSTGRES_USER}
-      - PGPOOL_POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      # DB login for Pgpool
+      PGPOOL_POSTGRES_USERNAME: ${POSTGRES_USER}
+      PGPOOL_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
-      - PGPOOL_PARAMS_SR_CHECK_USER=${POSTGRES_USER}
-      - PGPOOL_PARAMS_SR_CHECK_PASSWORD=${POSTGRES_PASSWORD}
-      - PGPOOL_PARAMS_HEALTH_CHECK_USER=${POSTGRES_USER}
-      - PGPOOL_PARAMS_HEALTH_CHECK_PASSWORD=${POSTGRES_PASSWORD}
+      # streaming replication check (required)
+      PGPOOL_SR_CHECK_USER: ${POSTGRES_USER}
+      PGPOOL_SR_CHECK_PASSWORD: ${POSTGRES_PASSWORD}
+      PGPOOL_HEALTH_CHECK_USER: ${POSTGRES_USER}
+      PGPOOL_HEALTH_CHECK_PASSWORD: ${POSTGRES_PASSWORD}
+      PGPOOL_PARAMS_ALLOW_CLEAR_TEXT_FRONTEND_AUTH: "on"
 
-      - PGPOOL_ADMIN_USERNAME=${PGPOOL_ADMIN_USER}
-      - PGPOOL_ADMIN_PASSWORD=${PGPOOL_ADMIN_PASSWORD}
+      # admin interface
+      PGPOOL_ADMIN_USERNAME: ${PGPOOL_ADMIN_USER}
+      PGPOOL_ADMIN_PASSWORD: ${PGPOOL_ADMIN_PASSWORD}
 
-      - PGPOOL_PARAMS_ENABLE_POOL_HBA=off
-      - PGPOOL_PARAMS_ENABLE_QUERY_CACHE=on
-      - PGPOOL_ENABLE_LOAD_BALANCING=yes
-      - PGPOOL_ENABLE_QUERY_CACHE=yes
-      - PGPOOL_NUM_INIT_CHILDREN=100
-      - PGPOOL_MAX_POOL=5
+      # authentication
+      PGPOOL_ENABLE_POOL_HBA: "yes"
+      PGPOOL_PASSWORD_FILE: /opt/pgpool-II/etc/pool_passwd
+      PGPOOL_AUTHENTICATION_METHOD: scram-sha-256
+      PGPOOL_PASSWORD_ENCRYPTION: scram-sha-256
 
-      - PGPOOL_ENABLE_POOL_HBA=yes
-      - PGPOOL_AUTHENTICATION_METHOD=scram-sha-256
-      - PGPOOL_PASSWORD_ENCRYPTION=scram-sha-256
+      # performance
+      PGPOOL_ENABLE_LOAD_BALANCING: "yes"
+      PGPOOL_ENABLE_QUERY_CACHE: "yes"
+      PGPOOL_NUM_INIT_CHILDREN: 100
+      PGPOOL_MAX_POOL: 10
 
 volumes:
   postgres_data:
