@@ -41,7 +41,7 @@ services:
         condition: service_healthy
 
     ports:
-      - "${PGPOOL_PORT}:5432"
+      - "${PGPOOL_PORT}:9999"
 
     environment:
       - PGPOOL_PARAMS_BACKEND_HOSTNAME0=postgres
