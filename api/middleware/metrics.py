@@ -1,6 +1,7 @@
 """
 Middleware for API metrics
 """
+import re
 import time
 from fastapi import Request
 from fastapi import Response
@@ -16,7 +17,7 @@ def add_metrics_middleware(app):
             response: Response = await call_next(request)
 
             route = request.scope.get("route").path if request.scope.get("route") else request.url.path
-            route.replace('\x00', '') # When sending routes with Nul (0x00) byte postgres will throw an error. So replace here 
+            route = re.sub(r'[^a-zA-Z0-9/_.-]', '', route) # Prevent Nul bytes and other stuff that postgreSQL can't handle
             status = response.status_code
 
         except Exception:
