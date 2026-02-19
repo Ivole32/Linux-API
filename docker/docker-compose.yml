@@ -68,6 +68,10 @@ services:
       - PGPOOL_NUM_INIT_CHILDREN=100
       - PGPOOL_MAX_POOL=5
 
+      - PGPOOL_ENABLE_POOL_HBA=yes
+      - PGPOOL_AUTHENTICATION_METHOD=scram-sha-256
+
+
 volumes:
   postgres_data:
 
