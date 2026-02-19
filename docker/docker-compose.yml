@@ -70,7 +70,7 @@ services:
 
       - PGPOOL_ENABLE_POOL_HBA=yes
       - PGPOOL_AUTHENTICATION_METHOD=scram-sha-256
-
+      - PGPOOL_PASSWORD_ENCRYPTION=scram-sha-256
 
 volumes:
   postgres_data:
