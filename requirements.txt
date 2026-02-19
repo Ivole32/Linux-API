@@ -12,9 +12,5 @@ psycopg-pool>=3.3.0
 psycopg2-binary>=2.9.11
 numpy>=2.4.2
 
-# Performance
-uvloop>=0.22.1
-httptools>=0.7.1
-
 # Pinned by snyk to fix https://security.snyk.io/vuln/SNYK-PYTHON-ZIPP-7430899
 zipp==3.19.1
