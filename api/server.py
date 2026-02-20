@@ -100,6 +100,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Setup CORS middleware early so it wraps all requests
+setup_cors(app)
+
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
@@ -152,8 +155,6 @@ if ENABLE_LEGACY_ROUTES:
 # Add custom headers middleware
 add_header_middleware(app)
 
-# Setup CORS middleware
-setup_cors(app)
 
 # Add Trusted Host Middleware
 # Need to add this manually
