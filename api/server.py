@@ -43,6 +43,9 @@ from api.middleware.metrics import add_metrics_middleware
 # Import HostTrust middleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+# Import disable/enable route middleware
+from api.middleware.route_access import add_route_access_middleware
+
 # Import metric flush worker
 from api.metrics.flush_worker import flush_loop
 
@@ -164,6 +167,8 @@ app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=ALLOWED_HOSTS
 )
+
+add_route_access_middleware(app)
 
 @app.get("/", include_in_schema=False)
 @limiter.limit("10/second")

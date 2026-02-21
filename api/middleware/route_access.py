@@ -9,9 +9,9 @@ from fastapi.responses import Response, JSONResponse
 
 from api.config.config import ROUTE_DISABLE_CONFIG, ROUTE_DISABLED_REASON, ROUTE_DISABLED_RETRY_AFTER
 
-def add_route_middleware(app):
+def add_route_access_middleware(app):
     @app.middleware("http")
-    async def route_middleware(request: Request, call_next):
+    async def route_access_middleware(request: Request, call_next):
         try:
             response: Response = await call_next(request)
 
