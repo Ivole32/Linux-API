@@ -19,7 +19,7 @@ def add_route_access_middleware(app):
             
             if route in ROUTE_DISABLE_CONFIG:
                 return JSONResponse(status_code=503, 
-                                    content=ROUTE_DISABLED_REASON,
+                                    content={"detail:": ROUTE_DISABLED_REASON},
                                     headers={"Retry-After": "300"})
 
         except Exception:
