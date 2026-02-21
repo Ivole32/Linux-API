@@ -5,7 +5,7 @@ Linux-API is a small REST API service for collecting and exposing metrics and us
 ## Documentation
 Full installation and configuration instructions are available in the project's documentation:
 
-- Manual setup guide: [wiki/manual_setup.md](manual_setup.md)
+- Manual setup guide: [wiki/manual_setup.md](https://github.com/Ivole32/Linux-API/wiki/Manual-setup-for-Linux%E2%80%90API)
 
 Please consult the manual setup first for a step-by-step deployment on Ubuntu systems.
 
