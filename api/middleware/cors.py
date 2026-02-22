@@ -23,3 +23,5 @@ def setup_cors(app: FastAPI) -> None:
         allow_headers=CORS_ALLOWED_HEADERS,
         max_age=CORS_MAX_AGE
     )
+
+    return app
