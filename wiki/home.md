@@ -5,6 +5,7 @@ Linux-API is a small REST API project written in Python (FastAPI) that collects 
 ## Documentation
 
 - Manual setup (step-by-step): [Manual Setup](https://github.com/Ivole32/Linux-API/wiki/Manual-setup-for-Linux%E2%80%90API)
+- Configuration options: [Configuration options](https://github.com/Ivole32/Linux-API/wiki/Configuration-options)
 - Automated setup: [Automated setup](https://github.com/Ivole32/Linux-API/wiki/Automated-setup-for-Linux%E2%80%90API) (Not recommendet)
 - Project overview: [README](https://github.com/Ivole32/Linux-API/blob/main/README.md)
 

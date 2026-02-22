@@ -44,7 +44,7 @@ cp example.env .env          # if the script didn't create .env
 # then fill other variables (DB credentials, host, etc.)
 ```
 
-After editing `.env`, verify application-specific settings in `api/config/config.py` and update values there if needed.
+After editing `.env`, verify application-specific settings in `api/config/config.py` and update values there if needed. Documentation about what those options mean is [here](https://github.com/Ivole32/Linux-API/wiki/Configuration-options).
 
 Keep `.env` secret.
 

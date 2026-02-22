@@ -111,6 +111,8 @@ sed -i "s|ALEMBIC_INI_FILE = .*|ALEMBIC_INI_FILE = r\"$NEW_BASE/alembic.ini\"|" 
 
 The first command sets the backup directory used by the app; the second points Alembic to the correct ini file.
 
+After editing those options, verify application-specific settings in `api/config/config.py` and update values there if needed. Documentation about what those options mean is [here](https://github.com/Ivole32/Linux-API/wiki/Configuration-options).
+
 ## 5. Start database services with Docker Compose
 
 Start the database and related containers using the `docker` compose definitions. From the repository root:
