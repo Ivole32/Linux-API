@@ -3,7 +3,7 @@
 Linux-API is a small REST API service for collecting and exposing metrics and user data for Linux systems. It is implemented in Python (FastAPI) and ships with Docker Compose configurations to run the required database services locally.
 
 ## Documentation
-Full installation and configuration instructions are available in the [project's documentation](https://github.com/Ivole32/Linux-API/wiki/Manual-setup-for-Linux%E2%80%90API)
+Full installation and configuration instructions are available in the [project's documentation](https://github.com/Ivole32/Linux-API/wiki/)
 
 Please consult the manual setup first for a step-by-step deployment on Ubuntu systems.
 
