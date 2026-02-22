@@ -131,6 +131,8 @@ Run the application using Uvicorn:
 python3 -m uvicorn api.server:app --host 0.0.0.0 --port 8080 --log-level debug
 ```
 
+Or use ```./start.sh```
+
 If the server reports user creation errors at startup, stop and restart the server.
 
 ## Support
