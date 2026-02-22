@@ -29,6 +29,10 @@ Please consult the manual setup first for a step-by-step deployment on Ubuntu sy
 ## Contributing
 See the repository root for development notes and tests. If you find problems in the docs or installation steps, please open an issue.
 
+
+## AI disclaimer
+I used **ChatGPT** to refine devlogs, support structural design decisions, and correct spelling and grammar throughout the documentation.
+
 ---
 
 Made with ❤️ by Ivole32 — https://github.com/Ivole32
