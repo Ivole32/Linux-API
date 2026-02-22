@@ -43,6 +43,9 @@ from api.middleware.metrics import add_metrics_middleware
 # Import HostTrust middleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+# Import disable/enable route middleware
+from api.middleware.route_access import add_route_access_middleware
+
 # Import metric flush worker
 from api.metrics.flush_worker import flush_loop
 
@@ -100,6 +103,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Setup CORS middleware early so it wraps all requests
+setup_cors(app)
+
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
@@ -152,8 +158,6 @@ if ENABLE_LEGACY_ROUTES:
 # Add custom headers middleware
 add_header_middleware(app)
 
-# Setup CORS middleware
-setup_cors(app)
 
 # Add Trusted Host Middleware
 # Need to add this manually
@@ -163,6 +167,8 @@ app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=ALLOWED_HOSTS
 )
+
+add_route_access_middleware(app)
 
 @app.get("/", include_in_schema=False)
 @limiter.limit("10/second")
