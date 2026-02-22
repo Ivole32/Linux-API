@@ -21,13 +21,13 @@ API_KEY_SECRET = os.getenv("API_KEY_SECRET", None) # Use None if not set in .env
 ENABLE_LEGACY_ROUTES = True
 
 # Demo Mode
-DEMO_MODE = True
+DEMO_MODE = False
 RESET_DATABASE_WHEN_DEMO = True
 
 # API configuration
 API_TITLE = "Linux API" # Short title for the API
 API_DESCRIPTION = "A Linux API server to get system information and other live information about your Linux machine." # Description of the API
-API_VERSION = "dev" # Version of the API
+API_VERSION = "v1" # Version of the API
 API_PREFIX = f"/api/{API_VERSION}" # Prefix for all API endpoints
 LEGACY_API_PREFIX = f"/api/legacy" # Prefix for old legacy routes
 API_DOCS_ENABLED = True # Enable or disable API documentation
@@ -39,12 +39,12 @@ ROUTE_DISABLED_REASON = "The route is currenty disabled." # The reason why the r
 ROUTE_DISABLED_RETRY_AFTER = 600 # A value in seconds after what time the client can retry to use the route
 
 # Rate limiting configuration
-API_RATE_LIMIT_ENABLED = False # Enable or disable rate limiting
+API_RATE_LIMIT_ENABLED = True # Enable or disable rate limiting
 API_DEFAULT_RATE_LIMITS = ["100/minute"] # Default rate limits
 
 # User configuration
 USERNAME_MIN_LENGTH = 4
-USERNAME_MAX_LENGTH = 18
+USERNAME_MAX_LENGTH = 12
 
 # PostgreSQL configuration
 # (Floats must stay as floats)
@@ -56,7 +56,7 @@ POSTGRES_DATABASE = os.getenv("POSTGRES_DB", None)  # Use None if not set in .en
 POSTGRES_MIN_CONNECTIONS = 1 # Minimum number of connections in the pool
 POSTGRES_MAX_CONNECTIONS = 5 # Maximum number of connections in the pool
 POSTGRES_CONNECT_TIMEOUT = 5.0 # Connection timeout for PostgreSQL (in seconds)
-POSTGRES_RETRIES = 1 # Number of retries for PostgreSQL connection
+POSTGRES_RETRIES = 2 # Number of retries for PostgreSQL connection
 POSTGRES_RETRY_DELAY = 2.0 # Delay between PostgreSQL connection retries (in seconds)
 POSTGRES_HEALTHCHECK_TIMEOUT = 15.0 # Timeout for PostgreSQL health checks (in seconds)
 POSTGRES_HEALTHCHECK_INTERVALL = 5.0 # Intervall time for PostgreSQL healthcheck (in seconds)
