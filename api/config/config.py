@@ -39,7 +39,7 @@ ROUTE_DISABLED_REASON = "The route is currenty disabled." # The reason why the r
 ROUTE_DISABLED_RETRY_AFTER = 600 # A value in seconds after what time the client can retry to use the route
 
 # Rate limiting configuration
-API_RATE_LIMIT_ENABLED = False # Enable or disable rate limiting
+API_RATE_LIMIT_ENABLED = True # Enable or disable rate limiting
 API_DEFAULT_RATE_LIMITS = ["100/minute"] # Default rate limits
 
 # User configuration
